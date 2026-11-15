@@ -12,6 +12,9 @@ export interface State {
   activePip: string;
   bestStreak: number;
   remindersOn: boolean;
+  circleCode: string;
+  circleToken: string;
+  displayName: string;
 }
 
 const initial: State = {
@@ -22,6 +25,9 @@ const initial: State = {
   activePip: 'pip',
   bestStreak: 0,
   remindersOn: false,
+  circleCode: '',
+  circleToken: '',
+  displayName: '',
 };
 
 interface Ctx {

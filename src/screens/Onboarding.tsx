@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Alert, ScrollView, Text, View, Pressable } from 'react-native';
+import { Alert, ScrollView, View, Pressable } from 'react-native';
+import { Text } from '../ui/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Pip } from '../ui/Pip';
 import { Button } from '../ui/Button';

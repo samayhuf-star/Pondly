@@ -1,5 +1,6 @@
 import React from 'react';
-import { Pressable, Text, ViewStyle } from 'react-native';
+import { Pressable, ViewStyle } from 'react-native';
+import { Text } from './Text';
 import * as Haptics from 'expo-haptics';
 import { C } from './theme';
 

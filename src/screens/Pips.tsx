@@ -1,5 +1,6 @@
 import React from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
+import { Text } from '../ui/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Pip } from '../ui/Pip';
 import { C } from '../ui/theme';

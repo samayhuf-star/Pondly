@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Modal, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Modal, Pressable, View } from 'react-native';
+import { Text } from './src/ui/Text';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { StoreProvider, useStore } from './src/store';
@@ -11,6 +12,9 @@ import { Circles } from './src/screens/Circles';
 import { Settings } from './src/screens/Settings';
 import { initPurchases, isPro } from './src/purchases';
 import { C } from './src/ui/theme';
+import { useFonts } from 'expo-font';
+import { Fredoka_700Bold } from '@expo-google-fonts/fredoka';
+import { Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold } from '@expo-google-fonts/nunito';
 
 type Tab = 'today' | 'forecast' | 'circles' | 'pips';
 const TABS: { id: Tab; label: string }[] = [
@@ -22,13 +26,14 @@ const TABS: { id: Tab; label: string }[] = [
 
 function Root() {
   const { ready, state } = useStore();
+  const [fontsLoaded, fontError] = useFonts({ Fredoka_700Bold, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold });
   const [tab, setTab] = useState<Tab>('today');
   const [settings, setSettings] = useState(false);
   const [pro, setPro] = useState(false);
 
   useEffect(() => { initPurchases(); isPro().then(setPro); }, []);
 
-  if (!ready) return <View style={{ flex: 1, backgroundColor: C.bg, alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator color={C.blue} /></View>;
+  if (!ready || (!fontsLoaded && !fontError)) return <View style={{ flex: 1, backgroundColor: C.bg, alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator color={C.blue} /></View>;
   if (!state.onboarded) return <Onboarding />;
 
   return (

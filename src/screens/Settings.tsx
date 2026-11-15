@@ -1,5 +1,6 @@
 import React from 'react';
-import { Alert, Linking, ScrollView, Switch, Text, View } from 'react-native';
+import { Alert, Linking, ScrollView, Switch, View } from 'react-native';
+import { Text } from '../ui/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '../ui/Button';
 import { C } from '../ui/theme';
