@@ -24,6 +24,7 @@ export function Circles() {
   const [circleName, setCircleName] = useState('');
   const [code, setCode] = useState('');
   const [offline, setOffline] = useState(false);
+  const [token] = useState(() => state.circleToken || newToken());
 
   const refresh = useCallback(async () => {
     if (!state.circleCode) return;
@@ -40,7 +41,6 @@ export function Circles() {
     if (!name.trim()) { Alert.alert('Add your name', 'Friends will see this name in your Circle.'); return; }
     setBusy(true);
     try {
-      const token = state.circleToken || newToken();
       const v = await fn();
       update({ circleCode: v.code, circleToken: token, displayName: name.trim() });
       setView(v);
@@ -48,7 +48,6 @@ export function Circles() {
     setBusy(false);
   };
 
-  const token = state.circleToken || newToken();
   const invite = (c: string) => Share.share({ message: `Join my Pondly Circle with code ${c}. We share goal progress only, never what we drink. Open Pondly, tap Circles, then Join.` });
 
   if (!state.circleCode) {
