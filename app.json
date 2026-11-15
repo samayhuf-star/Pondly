@@ -12,19 +12,48 @@
       "bundleIdentifier": "com.samay.pondly",
       "supportsTablet": false,
       "buildNumber": "1",
-      "infoPlist": { "ITSAppUsesNonExemptEncryption": false },
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      },
       "privacyManifests": {
         "NSPrivacyTracking": false,
         "NSPrivacyAccessedAPITypes": [
-          { "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults", "NSPrivacyAccessedAPITypeReasons": ["CA92.1"] }
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ]
+          }
         ]
       }
     },
     "plugins": [
-      ["expo-splash-screen", { "image": "./assets/splash-icon.png", "backgroundColor": "#E4F3FF", "imageWidth": 200 }],
-      ["expo-location", { "locationWhenInUsePermission": "Pondly uses your approximate location once a day to check today's weather and adapt your water goal." }],
-      ["expo-notifications", { "color": "#0F6FBF" }]
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "backgroundColor": "#E4F3FF",
+          "imageWidth": 200
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Pondly uses your approximate location once a day to check today's weather and adapt your water goal."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#0F6FBF"
+        }
+      ]
     ],
-    "owner": "krosz"
+    "owner": "krosz",
+    "extra": {
+      "eas": {
+        "projectId": "3c3e4cf9-8737-45b1-8057-e0d694e955e8"
+      }
+    }
   }
 }
