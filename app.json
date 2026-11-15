@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Pondly",
+    "slug": "pondly",
+    "scheme": "pondly",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#E4F3FF",
+    "ios": {
+      "bundleIdentifier": "com.samay.pondly",
+      "supportsTablet": false,
+      "buildNumber": "1",
+      "infoPlist": { "ITSAppUsesNonExemptEncryption": false },
+      "privacyManifests": {
+        "NSPrivacyTracking": false,
+        "NSPrivacyAccessedAPITypes": [
+          { "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults", "NSPrivacyAccessedAPITypeReasons": ["CA92.1"] }
+        ]
+      }
+    },
+    "plugins": [
+      ["expo-splash-screen", { "image": "./assets/splash-icon.png", "backgroundColor": "#E4F3FF", "imageWidth": 200 }],
+      ["expo-location", { "locationWhenInUsePermission": "Pondly uses your approximate location once a day to check today's weather and adapt your water goal." }],
+      ["expo-notifications", { "color": "#0F6FBF" }]
+    ],
+    "owner": "krosz"
+  }
+}
