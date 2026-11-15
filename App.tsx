@@ -7,14 +7,16 @@ import { Onboarding } from './src/screens/Onboarding';
 import { Home } from './src/screens/Home';
 import { Forecast } from './src/screens/Forecast';
 import { Pips } from './src/screens/Pips';
+import { Circles } from './src/screens/Circles';
 import { Settings } from './src/screens/Settings';
 import { initPurchases, isPro } from './src/purchases';
 import { C } from './src/ui/theme';
 
-type Tab = 'today' | 'forecast' | 'pips';
+type Tab = 'today' | 'forecast' | 'circles' | 'pips';
 const TABS: { id: Tab; label: string }[] = [
   { id: 'today', label: 'Today' },
   { id: 'forecast', label: 'Forecast' },
+  { id: 'circles', label: 'Circles' },
   { id: 'pips', label: 'Pips' },
 ];
 
@@ -34,6 +36,7 @@ function Root() {
       <View style={{ flex: 1 }}>
         {tab === 'today' && <Home onSettings={() => setSettings(true)} />}
         {tab === 'forecast' && <Forecast pro={pro} onPro={() => setPro(true)} />}
+        {tab === 'circles' && <Circles />}
         {tab === 'pips' && <Pips />}
       </View>
       <SafeAreaView edges={['bottom']} style={{ backgroundColor: C.card }}>
