@@ -8,7 +8,7 @@ import { Button } from '../ui/Button';
 import { C } from '../ui/theme';
 import { PIPS, dayKey, totalMl } from '../logic/hydration';
 import { useStore } from '../store';
-import { CircleView, createCircle, joinCircle, leaveCircle, newToken, nudgeMember, syncCircle } from '../circles';
+import { CircleView, blockMember, createCircle, joinCircle, leaveCircle, newToken, nudgeMember, reportMember, syncCircle } from '../circles';
 
 const input = { backgroundColor: C.card, borderRadius: 18, paddingHorizontal: 16, minHeight: 52, fontSize: 17, color: C.ink, fontFamily: 'Nunito_700Bold' } as const;
 
@@ -47,6 +47,13 @@ export function Circles() {
     } catch (e) { Alert.alert('Could not continue', (e as Error).message); }
     setBusy(false);
   };
+
+  const moderate = (id: string, who: string) =>
+    Alert.alert(who, 'Report or block this person. Blocking hides you from each other in this Circle.', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Block', onPress: async () => { try { setView(await blockMember(state.circleCode, state.circleToken, id)); } catch (e) { Alert.alert('Could not block', (e as Error).message); } } },
+      { text: 'Report and block', style: 'destructive', onPress: async () => { try { setView(await reportMember(state.circleCode, state.circleToken, id, 'inappropriate')); Alert.alert('Thanks', 'We review reports within 24 hours. This person is now blocked.'); } catch (e) { Alert.alert('Could not report', (e as Error).message); } } },
+    ]);
 
   const invite = (c: string) => Share.share({ message: `Join my Pondly Circle with code ${c}. We share goal progress only, never what we drink. Open Pondly, tap Circles, then Join.` });
 
@@ -94,7 +101,10 @@ export function Circles() {
           {members.map((m) => (
             <View key={m.id} style={{ gap: 6 }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={{ fontSize: 17, fontWeight: '800', color: C.ink }}>{m.id === view?.me ? 'You' : m.name}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flexShrink: 1 }}>
+                                  <Text accessibilityHint={m.id === view?.me ? undefined : 'Long press to report or block'} onLongPress={m.id === view?.me ? undefined : () => moderate(m.id, m.name)} style={{ fontSize: 17, fontWeight: '800', color: C.ink }}>{m.id === view?.me ? 'You' : m.name}</Text>
+                  {m.id !== view?.me && <Text accessibilityRole="button" accessibilityLabel={`Report or block ${m.name}`} onPress={() => moderate(m.id, m.name)} style={{ fontSize: 13, fontWeight: '800', color: C.sub, paddingVertical: 8 }}>Report</Text>}
+                </View>
                 {m.id !== view?.me && m.pct < 100 ? (
                   <Button label={m.nudgedByMe ? 'Nudged' : 'Nudge'} kind="soft" disabled={m.nudgedByMe} style={{ minHeight: 40, paddingHorizontal: 16 }}
                     onPress={async () => { try { setView(await nudgeMember(state.circleCode, state.circleToken, m.id)); } catch (e) { Alert.alert('Could not nudge', (e as Error).message); } }} />
@@ -107,7 +117,7 @@ export function Circles() {
           ))}
         </View>
         {offline && <Text style={{ fontSize: 14, fontWeight: '700', color: C.sub, textAlign: 'center' }}>You are offline. Progress updates when you reconnect.</Text>}
-        <Text style={{ fontSize: 14, fontWeight: '600', color: C.sub, textAlign: 'center' }}>Circles share goal progress only. One nudge per person per day.</Text>
+        <Text style={{ fontSize: 14, fontWeight: '600', color: C.sub, textAlign: 'center' }}>Circles share goal progress only. One nudge per person per day. Press and hold a name to report or block.</Text>
         <Button label="Leave Circle" kind="ghost"
           onPress={() => Alert.alert('Leave this Circle?', 'You can rejoin with the code.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Leave', style: 'destructive', onPress: async () => { await leaveCircle(state.circleCode, state.circleToken).catch(() => {}); update({ circleCode: '' }); setView(null); } }])} />
       </ScrollView>

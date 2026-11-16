@@ -27,3 +27,5 @@ export const joinCircle = (code: string, displayName: string, token: string) => 
 export const syncCircle = (code: string, token: string, pct: number) => call({ action: 'sync', code, token, pct }) as Promise<CircleView>;
 export const nudgeMember = (code: string, token: string, toMember: string) => call({ action: 'nudge', code, token, toMember }) as Promise<CircleView>;
 export const leaveCircle = (code: string, token: string) => call({ action: 'leave', code, token });
+export const reportMember = (code: string, token: string, member: string, reason: string) => call({ action: 'report', code, token, member, reason }) as Promise<CircleView>;
+export const blockMember = (code: string, token: string, member: string) => call({ action: 'block', code, token, member }) as Promise<CircleView>;
