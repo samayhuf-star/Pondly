@@ -14,7 +14,7 @@ const input = { backgroundColor: C.card, borderRadius: 18, paddingHorizontal: 16
 
 /** Circles: private groups that share goal progress only, never what you drink. */
 export function Circles() {
-  const { state, goalToday, update } = useStore();
+  const { state, goalToday, vitality, update } = useStore();
   const ml = totalMl(state.log[dayKey(new Date())] ?? []);
   const pct = Math.min(100, Math.round((ml / goalToday) * 100));
   const pip = PIPS.find((p) => p.id === state.activePip) ?? PIPS[0];
@@ -63,7 +63,7 @@ export function Circles() {
         <ScrollView contentContainerStyle={{ padding: 20, gap: 14 }} keyboardShouldPersistTaps="handled">
           <Text style={{ fontSize: 30, fontWeight: '800', color: C.ink }}>Circles</Text>
           <View style={{ backgroundColor: C.blueSoft, borderRadius: 28, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-            <Pond progress={ml / goalToday} size={96}><Pip def={pip} size={52} /></Pond>
+            <Pond progress={ml / goalToday} size={96}><Pip def={pip} size={60} vitality={vitality.value} /></Pond>
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 20, fontWeight: '800', color: C.ink }}>Fill one pond together</Text>
               <Text style={{ fontSize: 15, fontWeight: '600', color: C.sub }}>Friends see your goal progress only, never what you drink.</Text>
@@ -90,7 +90,7 @@ export function Circles() {
           <Button label="Invite" kind="soft" onPress={() => invite(state.circleCode)} style={{ minHeight: 44 }} />
         </View>
         <View style={{ backgroundColor: C.blueSoft, borderRadius: 28, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-          <Pond progress={members.length ? done / members.length : 0} size={96}><Pip def={pip} size={52} /></Pond>
+          <Pond progress={members.length ? done / members.length : 0} size={96}><Pip def={pip} size={60} vitality={vitality.value} /></Pond>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 22, fontWeight: '800', color: C.ink }}>{done} of {members.length || 1} hit goal</Text>
             <Text style={{ fontSize: 15, fontWeight: '600', color: C.sub }}>Code {state.circleCode}</Text>

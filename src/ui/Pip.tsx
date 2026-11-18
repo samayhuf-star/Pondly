@@ -1,35 +1,142 @@
-import React from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { AccessibilityInfo, Animated, Easing, View } from 'react-native';
 import Svg, { Ellipse, Circle, Path, G } from 'react-native-svg';
 import { PipDef } from '../logic/hydration';
+import { Mood, stageFor } from '../logic/vitality';
+import { buildPip } from './pipShapes';
 
-export function Pip({ def, size = 120, cheer = false }: { def: PipDef; size?: number; cheer?: boolean }) {
-  const gills = cheer
-    ? [[40, 70, -48], [30, 94, -24], [40, 118, 2], [160, 70, 48], [170, 94, 24], [160, 118, -2]]
-    : [[40, 70, -28], [30, 94, -4], [40, 118, 22], [160, 70, 28], [170, 94, 4], [160, 118, -22]];
+interface Props {
+  def: PipDef;
+  size?: number;
+  /** Forces the happy goal-reached pose (kept for older call sites). */
+  cheer?: boolean;
+  /** 0..100. How grown and healthy Pip is. Default shows a healthy Pip. */
+  vitality?: number;
+  mood?: Mood;
+  /** Turn on breathing, blinking, gill flutter and sip reactions. Off by default so lists stay cheap. */
+  live?: boolean;
+  /** Change this value (e.g. number of sips today) to make Pip react to a sip. */
+  sipKey?: number;
+}
+
+const VIEW = '-24 -24 248 248';
+
+export function Pip({ def, size = 120, cheer = false, vitality = 60, mood = 'happy', live = false, sipKey = 0 }: Props) {
+  const [blink, setBlink] = useState(false);
+  const [sway, setSway] = useState(0);
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const animate = live && !reduceMotion;
+  const effective: Mood = cheer ? 'thrilled' : mood;
+
+  useEffect(() => {
+    AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion).catch(() => {});
+    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
+    return () => sub.remove();
+  }, []);
+
+  // Blink every few seconds (not while asleep) and flutter the gills.
+  useEffect(() => {
+    if (!animate) { setBlink(false); setSway(0); return; }
+    let off: ReturnType<typeof setTimeout> | undefined;
+    const blinkTimer = setInterval(() => {
+      if (effective === 'sleeping') return;
+      setBlink(true);
+      off = setTimeout(() => setBlink(false), 150);
+    }, 3300);
+    let phase = 1;
+    const swayTimer = setInterval(() => {
+      phase = -phase;
+      setSway(effective === 'sleeping' ? 0 : phase);
+    }, effective === 'thrilled' ? 450 : 800);
+    return () => { clearInterval(blinkTimer); clearInterval(swayTimer); if (off) clearTimeout(off); };
+  }, [animate, effective]);
+
+  // Breathing and floating. Slow and shallow when weak or asleep, lively when strong.
+  const [breathe] = useState(() => new Animated.Value(0));
+  useEffect(() => {
+    if (!animate) { breathe.setValue(0); return; }
+    const period = effective === 'sleeping' ? 3600 : vitality < 30 ? 3000 : effective === 'thrilled' ? 1300 : 2000;
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(breathe, { toValue: 1, duration: period / 2, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        Animated.timing(breathe, { toValue: 0, duration: period / 2, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [animate, effective, vitality, breathe]);
+
+  // Sip reaction: a hop, a squash on landing, and rising bubbles.
+  const [hop] = useState(() => new Animated.Value(0));
+  const [bubbles] = useState(() => new Animated.Value(0));
+  const firstKey = useRef(sipKey);
+  useEffect(() => {
+    if (!animate || sipKey === firstKey.current) { firstKey.current = sipKey; return; }
+    firstKey.current = sipKey;
+    hop.setValue(0);
+    bubbles.setValue(0);
+    Animated.parallel([
+      Animated.sequence([
+        Animated.timing(hop, { toValue: 1, duration: 180, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+        Animated.spring(hop, { toValue: 0, friction: 4, tension: 120, useNativeDriver: true }),
+      ]),
+      Animated.timing(bubbles, { toValue: 1, duration: 1300, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+    ]).start();
+  }, [sipKey, animate, hop, bubbles]);
+
+  const amp = effective === 'sleeping' ? 1 : vitality < 30 ? 1.5 : 3;
+  const translateY = Animated.add(
+    breathe.interpolate({ inputRange: [0, 1], outputRange: [amp, -amp] }),
+    hop.interpolate({ inputRange: [0, 1], outputRange: [0, -size * 0.1] }),
+  );
+  const scaleY = Animated.multiply(
+    breathe.interpolate({ inputRange: [0, 1], outputRange: [1, 1.025] }),
+    hop.interpolate({ inputRange: [0, 1], outputRange: [1, 1.06] }),
+  );
+
+  const { shapes, scale } = useMemo(() => buildPip(def, { vitality, mood, cheer, blink, sway }), [def, vitality, mood, cheer, blink, sway]);
+  const tx = 100 - 100 * scale;
+  const ty = 180 - 180 * scale;
+  const stage = stageFor(vitality);
+
+  const bubbleSpecs = [
+    { x: 0.3, delay: 0, s: 0.07 },
+    { x: 0.5, delay: 0.15, s: 0.05 },
+    { x: 0.68, delay: 0.3, s: 0.06 },
+  ];
+
   return (
-    <Svg width={size} height={size} viewBox="0 0 200 200" accessibilityLabel={`${def.name} the axolotl`}>
-      <G fill={def.gill}>
-        {gills.map(([cx, cy, r], i) => (
-          <Ellipse key={i} cx={cx} cy={cy} rx={28} ry={8} rotation={r} origin={`${cx}, ${cy}`} />
-        ))}
-      </G>
-      <Ellipse cx={62} cy={168} rx={16} ry={9} fill={def.body} />
-      <Ellipse cx={138} cy={168} rx={16} ry={9} fill={def.body} />
-      <Ellipse cx={100} cy={116} rx={64} ry={56} fill={def.body} />
-      <Ellipse cx={100} cy={140} rx={40} ry={26} fill={def.belly} />
-      {cheer ? (
-        <>
-          <Path d="M68 104 Q76 96 84 104" fill="none" stroke="#0B2A3C" strokeWidth={4.5} strokeLinecap="round" />
-          <Path d="M116 104 Q124 96 132 104" fill="none" stroke="#0B2A3C" strokeWidth={4.5} strokeLinecap="round" />
-          <Path d="M86 120 Q100 140 114 120 Z" fill="#0B2A3C" />
-        </>
-      ) : (
-        <>
-          <Circle cx={76} cy={104} r={7.5} fill="#0B2A3C" />
-          <Circle cx={124} cy={104} r={7.5} fill="#0B2A3C" />
-          <Path d="M89 124 Q100 135 111 124" fill="none" stroke="#0B2A3C" strokeWidth={4} strokeLinecap="round" />
-        </>
-      )}
-    </Svg>
+    <View style={{ width: size, height: size }} accessible accessibilityLabel={`${def.name} the axolotl, ${stage.label.toLowerCase()}, ${effective}`}>
+      <Animated.View style={{ width: size, height: size, transform: [{ translateY }, { scaleY }] }}>
+        <Svg width={size} height={size} viewBox={VIEW}>
+          <G transform={`translate(${tx} ${ty}) scale(${scale})`}>
+            {shapes.map((s, i) => {
+              if (s.t === 'ellipse') return <Ellipse key={i} cx={s.cx} cy={s.cy} rx={s.rx} ry={s.ry} fill={s.fill} rotation={s.rotation} origin={`${s.cx}, ${s.cy}`} />;
+              if (s.t === 'circle') return <Circle key={i} cx={s.cx} cy={s.cy} r={s.r} fill={s.fill} />;
+              return <Path key={i} d={s.d} fill={s.fill ?? 'none'} stroke={s.stroke} strokeWidth={s.sw} strokeLinecap="round" strokeLinejoin="round" />;
+            })}
+          </G>
+        </Svg>
+      </Animated.View>
+      {animate && bubbleSpecs.map((b, i) => (
+        <Animated.View
+          key={i}
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            left: size * b.x,
+            top: size * 0.35,
+            width: size * b.s,
+            height: size * b.s,
+            borderRadius: size,
+            borderWidth: 2,
+            borderColor: '#FFFFFF',
+            backgroundColor: 'rgba(125,211,252,0.45)',
+            opacity: bubbles.interpolate({ inputRange: [0, b.delay, b.delay + 0.2, 1], outputRange: [0, 0, 1, 0], extrapolate: 'clamp' }),
+            transform: [{ translateY: bubbles.interpolate({ inputRange: [0, 1], outputRange: [0, -size * (0.35 + i * 0.05)] }) }],
+          }}
+        />
+      ))}
+    </View>
   );
 }
