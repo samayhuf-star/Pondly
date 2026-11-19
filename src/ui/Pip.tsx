@@ -34,9 +34,9 @@ export function Pip({ def, size = 120, cheer = false, vitality = 60, mood = 'hap
     return () => sub.remove();
   }, []);
 
-  // Blink every few seconds (not while asleep) and flutter the gills.
+  // Blink every few seconds (not while asleep) and flap the flippers.
   useEffect(() => {
-    if (!animate) { setBlink(false); setSway(0); return; }
+    if (!animate) return;
     let off: ReturnType<typeof setTimeout> | undefined;
     const blinkTimer = setInterval(() => {
       if (effective === 'sleeping') return;
@@ -94,7 +94,7 @@ export function Pip({ def, size = 120, cheer = false, vitality = 60, mood = 'hap
     hop.interpolate({ inputRange: [0, 1], outputRange: [1, 1.06] }),
   );
 
-  const { shapes, scale } = useMemo(() => buildPip(def, { vitality, mood, cheer, blink, sway }), [def, vitality, mood, cheer, blink, sway]);
+  const { shapes, scale } = useMemo(() => buildPip(def, { vitality, mood, cheer, blink: animate && blink, sway: animate ? sway : 0 }), [def, vitality, mood, cheer, animate, blink, sway]);
   const tx = 100 - 100 * scale;
   const ty = 180 - 180 * scale;
   const stage = stageFor(vitality);
@@ -106,7 +106,7 @@ export function Pip({ def, size = 120, cheer = false, vitality = 60, mood = 'hap
   ];
 
   return (
-    <View style={{ width: size, height: size }} accessible accessibilityLabel={`${def.name} the axolotl, ${stage.label.toLowerCase()}, ${effective}`}>
+    <View style={{ width: size, height: size }} accessible accessibilityLabel={`${def.name} the penguin, ${stage.label.toLowerCase()}, ${effective}`}>
       <Animated.View style={{ width: size, height: size, transform: [{ translateY }, { scaleY }] }}>
         <Svg width={size} height={size} viewBox={VIEW}>
           <G transform={`translate(${tx} ${ty}) scale(${scale})`}>

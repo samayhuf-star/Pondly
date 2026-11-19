@@ -26,13 +26,14 @@ export function Circles() {
   const [offline, setOffline] = useState(false);
   const [token] = useState(() => state.circleToken || newToken());
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(() => {
     if (!state.circleCode) return;
-    try { setView(await syncCircle(state.circleCode, state.circleToken, pct)); setOffline(false); }
-    catch (e) {
-      if ((e as Error).message === 'Not a member') update({ circleCode: '' });
-      else setOffline(true);
-    }
+    syncCircle(state.circleCode, state.circleToken, pct)
+      .then((v) => { setView(v); setOffline(false); })
+      .catch((e: Error) => {
+        if (e.message === 'Not a member') update({ circleCode: '' });
+        else setOffline(true);
+      });
   }, [state.circleCode, state.circleToken, pct, update]);
 
   useEffect(() => { refresh(); const t = setInterval(refresh, 30000); return () => clearInterval(t); }, [refresh]);

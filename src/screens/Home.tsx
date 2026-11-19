@@ -37,8 +37,8 @@ export function Home({ onSettings }: { onSettings: () => void }) {
           </Pressable>
         </View>
 
-        <Pond progress={progress} size={290}>
-          <Pip def={pip} size={200} vitality={vitality.value} mood={mood} live sipKey={entries.length} />
+        <Pond progress={progress} size={330}>
+          <Pip def={pip} size={310} vitality={vitality.value} mood={mood} live sipKey={entries.length} />
         </Pond>
 
         <View style={{ alignItems: 'center' }}>

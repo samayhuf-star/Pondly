@@ -16,10 +16,10 @@ export function Forecast({ pro, onPro }: { pro: boolean; onPro: () => void }) {
   const [status, setStatus] = useState<'loading' | 'ok' | 'denied' | 'error'>('loading');
   const [workout, setWorkout] = useState(0);
 
-  const load = useCallback(async () => {
-    setStatus('loading');
-    const r = await fetchTodayHigh();
-    if (r.status === 'ok') { setTempC(r.tempC); setStatus('ok'); } else setStatus(r.status);
+  const load = useCallback(() => {
+    fetchTodayHigh().then((r) => {
+      if (r.status === 'ok') { setTempC(r.tempC); setStatus('ok'); } else setStatus(r.status);
+    });
   }, []);
   useEffect(() => { load(); }, [load]);
 
@@ -50,10 +50,10 @@ export function Forecast({ pro, onPro }: { pro: boolean; onPro: () => void }) {
       <ScrollView contentContainerStyle={{ padding: 20, gap: 16 }}>
         <Text style={{ fontSize: 30, fontWeight: '800', color: C.ink }}>Thirst Forecast</Text>
         <View style={{ backgroundColor: '#FFE8B8', borderRadius: 24, padding: 20, gap: 6 }}>
-          {status === 'loading' && <Text style={{ fontWeight: '800', color: C.ink, fontSize: 18 }}>Checking today's weather…</Text>}
+          {status === 'loading' && <Text style={{ fontWeight: '800', color: C.ink, fontSize: 18 }}>Checking today&apos;s weather…</Text>}
           {status === 'ok' && (
             <>
-              <Text style={{ fontWeight: '800', color: '#4A3B14' }}>TODAY'S HIGH</Text>
+              <Text style={{ fontWeight: '800', color: '#4A3B14' }}>TODAY&apos;S HIGH</Text>
               <Text style={{ fontSize: 44, fontWeight: '800', color: C.ink }}>{tempC}°C</Text>
             </>
           )}
@@ -62,7 +62,7 @@ export function Forecast({ pro, onPro }: { pro: boolean; onPro: () => void }) {
               <Text style={{ fontWeight: '800', color: C.ink, fontSize: 18 }}>{status === 'denied' ? 'Location is off' : "Couldn't get the weather"}</Text>
               <Text style={{ color: '#4A3B14', fontWeight: '600' }}>{status === 'denied' ? 'Allow location while using the app to adapt your goal to the weather. You can also set a temperature below.' : 'Check your connection, or set a temperature below.'}</Text>
               <View style={{ flexDirection: 'row', gap: 10, marginTop: 8, flexWrap: 'wrap' }}>
-                <Button label="Try again" kind="soft" onPress={load} />
+                <Button label="Try again" kind="soft" onPress={() => { setStatus('loading'); load(); }} />
                 {[25, 30, 35, 40].map((t) => (
                   <Button key={t} label={`${t}°C`} kind={tempC === t ? 'primary' : 'soft'} onPress={() => setTempC(t)} style={{ minWidth: 70 }} />
                 ))}
