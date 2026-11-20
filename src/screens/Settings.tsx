@@ -6,7 +6,7 @@ import { Button } from '../ui/Button';
 import { C } from '../ui/theme';
 import { useStore } from '../store';
 import { disableReminders, enableReminders } from '../reminders';
-import { restore, showPaywall } from '../purchases';
+import { openCustomerCenter, restore, showPaywall } from '../purchases';
 import { PRIVACY_URL, SUPPORT_EMAIL, TERMS_URL } from '../config';
 
 export function Settings({ pro, onPro, onClose }: { pro: boolean; onPro: () => void; onClose: () => void }) {
@@ -57,6 +57,7 @@ export function Settings({ pro, onPro, onClose }: { pro: boolean; onPro: () => v
           <Text style={{ fontWeight: '800', fontSize: 17, color: C.ink }}>Pondly Pro</Text>
           <Text style={{ color: C.sub, fontWeight: '600' }}>{pro ? 'Active. Thank you!' : 'Apply the Thirst Forecast to your daily goal.'}</Text>
           {!pro && <Button label="See Pro options" onPress={upgrade} />}
+          {pro && <Button label="Manage subscription" onPress={openCustomerCenter} />}
           <Button label="Restore Purchases" kind="soft" onPress={doRestore} />
         </View>
         <View style={card}>
