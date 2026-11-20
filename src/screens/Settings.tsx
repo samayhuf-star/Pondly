@@ -59,6 +59,7 @@ export function Settings({ pro, onPro, onClose }: { pro: boolean; onPro: () => v
           {!pro && <Button label="See Pro options" onPress={upgrade} />}
           {pro && <Button label="Manage subscription" onPress={openCustomerCenter} />}
           <Button label="Restore Purchases" kind="soft" onPress={doRestore} />
+          <Text style={{ color: C.sub, fontSize: 12, lineHeight: 17 }}>Pondly Pro starts with a 7-day free trial, then renews automatically at the price shown on the Pro screen until you cancel. Cancel any time in your Apple ID subscription settings, at least 24 hours before the period ends. See the Terms of Use and Privacy Policy below.</Text>
         </View>
         <View style={card}>
           <Button label="Privacy Policy" kind="ghost" onPress={() => Linking.openURL(PRIVACY_URL)} />
