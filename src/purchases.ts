@@ -6,7 +6,11 @@ import { PRO_ENTITLEMENT, REVENUECAT_IOS_KEY, revenueCatConfigured } from './con
 let started = false;
 
 export function initPurchases(): void {
-  if (started || !revenueCatConfigured || Platform.OS !== 'ios') return;
+  if (started || Platform.OS !== 'ios') return;
+  if (!revenueCatConfigured) {
+    if (__DEV__) console.warn('Pondly: EXPO_PUBLIC_REVENUECAT_IOS_KEY is not set; Pro purchases are disabled in this build.');
+    return;
+  }
   Purchases.configure({ apiKey: REVENUECAT_IOS_KEY });
   started = true;
 }

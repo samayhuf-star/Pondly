@@ -6,7 +6,7 @@ import { Pip } from '../ui/Pip';
 import { Pond } from '../ui/Pond';
 import { Button } from '../ui/Button';
 import { C } from '../ui/theme';
-import { PIPS, dayKey, totalMl } from '../logic/hydration';
+import { PIPS, totalMl } from '../logic/hydration';
 import { useStore } from '../store';
 import { CircleView, blockMember, createCircle, joinCircle, leaveCircle, newToken, nudgeMember, reportMember, syncCircle } from '../circles';
 
@@ -14,8 +14,8 @@ const input = { backgroundColor: C.card, borderRadius: 18, paddingHorizontal: 16
 
 /** Circles: private groups that share goal progress only, never what you drink. */
 export function Circles() {
-  const { state, goalToday, update } = useStore();
-  const ml = totalMl(state.log[dayKey(new Date())] ?? []);
+  const { state, todayKey, goalToday, update } = useStore();
+  const ml = totalMl(state.log[todayKey] ?? []);
   const pct = Math.min(100, Math.round((ml / goalToday) * 100));
   const pip = PIPS.find((p) => p.id === state.activePip) ?? PIPS[0];
   const [view, setView] = useState<CircleView | null>(null);

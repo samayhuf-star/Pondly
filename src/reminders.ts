@@ -1,5 +1,5 @@
 import * as Notifications from 'expo-notifications';
-import { reminderCountFor, reminderHours } from './logic/hydration';
+import { reminderCountFor, reminderTimes } from './logic/hydration';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({ shouldShowBanner: true, shouldShowList: true, shouldPlaySound: false, shouldSetBadge: false }),
@@ -21,12 +21,12 @@ export async function enableReminders(wakeHour: number, sleepHour: number, goalM
 
 export async function scheduleReminders(wakeHour: number, sleepHour: number, goalMl: number): Promise<void> {
   await Notifications.cancelAllScheduledNotificationsAsync();
-  const hours = reminderHours(wakeHour, sleepHour, reminderCountFor(goalMl));
+  const times = reminderTimes(wakeHour, sleepHour, reminderCountFor(goalMl));
   await Promise.all(
-    hours.map((hour, i) =>
+    times.map(({ hour, minute }, i) =>
       Notifications.scheduleNotificationAsync({
         content: { title: 'Pondly', body: LINES[i % LINES.length] },
-        trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour, minute: 0 },
+        trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour, minute },
       }),
     ),
   );

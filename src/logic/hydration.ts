@@ -36,14 +36,32 @@ export function forecastGoal(i: ForecastInput): Forecast {
   return { goalMl, heatMl, workoutMl };
 }
 
-/** Evenly spaced reminder hours between wake and sleep (inclusive of wake+1). */
-export function reminderHours(wakeHour: number, sleepHour: number, count: number): number[] {
-  const span = (sleepHour - wakeHour + 24) % 24 || 24;
+export interface ReminderTime {
+  hour: number;
+  minute: number;
+}
+
+/**
+ * Evenly spaced reminder times strictly between wake and sleep, snapped to 5 minutes.
+ * Minute precision keeps the requested count: 12 reminders from 12:00 to 20:00 gives 12 distinct times.
+ */
+export function reminderTimes(wakeHour: number, sleepHour: number, count: number): ReminderTime[] {
+  const spanMin = ((sleepHour - wakeHour + 24) % 24 || 24) * 60;
   const n = clamp(count, 1, 16);
-  const step = span / (n + 1);
-  const out: number[] = [];
-  for (let k = 1; k <= n; k++) out.push(Math.round(wakeHour + step * k) % 24);
-  return Array.from(new Set(out));
+  const step = spanMin / (n + 1);
+  const seen = new Set<number>();
+  const out: ReminderTime[] = [];
+  for (let k = 1; k <= n; k++) {
+    const total = (wakeHour * 60 + roundTo(step * k, 5)) % 1440;
+    if (seen.has(total)) continue;
+    seen.add(total);
+    out.push({ hour: Math.floor(total / 60), minute: total % 60 });
+  }
+  return out;
+}
+
+export function formatReminderTime(t: ReminderTime): string {
+  return `${t.hour}:${`${t.minute}`.padStart(2, '0')}`;
 }
 
 export function reminderCountFor(goalMl: number): number {

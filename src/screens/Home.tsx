@@ -6,14 +6,14 @@ import { Pip } from '../ui/Pip';
 import { Pond } from '../ui/Pond';
 import { Button } from '../ui/Button';
 import { C } from '../ui/theme';
-import { PIPS, dayKey, totalMl } from '../logic/hydration';
+import { PIPS, totalMl } from '../logic/hydration';
 import { useStore } from '../store';
 
 const AMOUNTS = [150, 250, 350, 500];
 
 export function Home({ onSettings }: { onSettings: () => void }) {
-  const { state, goalToday, streak, addWater, undoLast } = useStore();
-  const entries = state.log[dayKey(new Date())] ?? [];
+  const { state, todayKey, goalToday, streak, addWater, undoLast } = useStore();
+  const entries = state.log[todayKey] ?? [];
   const ml = totalMl(entries);
   const progress = ml / goalToday;
   const done = ml >= goalToday;

@@ -1,4 +1,4 @@
-import { baseGoalMl, forecastGoal, reminderHours, reminderCountFor, currentStreak, dayKey, unlockedPips, totalMl } from './hydration';
+import { baseGoalMl, forecastGoal, reminderTimes, reminderCountFor, currentStreak, dayKey, unlockedPips, totalMl } from './hydration';
 
 describe('baseGoalMl', () => {
   it('uses 33 ml per kg rounded to 50', () => {
@@ -31,15 +31,21 @@ describe('forecastGoal', () => {
   });
 });
 
-describe('reminderHours', () => {
+describe('reminderTimes', () => {
+  const mins = (t: { hour: number; minute: number }) => t.hour * 60 + t.minute;
   it('stays between wake and sleep', () => {
-    const h = reminderHours(7, 23, 8);
-    expect(h.length).toBeGreaterThan(0);
-    h.forEach((x) => { expect(x).toBeGreaterThanOrEqual(7); expect(x).toBeLessThanOrEqual(23); });
+    const h = reminderTimes(7, 23, 8);
+    expect(h.length).toBe(8);
+    h.forEach((x) => { expect(mins(x)).toBeGreaterThan(7 * 60); expect(mins(x)).toBeLessThan(23 * 60); });
+  });
+  it('keeps the requested count in a short window', () => {
+    const h = reminderTimes(12, 20, 12);
+    expect(h.length).toBe(12);
+    expect(new Set(h.map(mins)).size).toBe(12);
   });
   it('handles sleeping after midnight', () => {
-    const h = reminderHours(10, 2, 6);
-    expect(h.length).toBeGreaterThan(0);
+    const h = reminderTimes(10, 2, 6);
+    expect(h.length).toBe(6);
   });
   it('count scales with goal within 6-12', () => {
     expect(reminderCountFor(1500)).toBe(6);

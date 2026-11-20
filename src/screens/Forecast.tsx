@@ -4,7 +4,7 @@ import { Text } from '../ui/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '../ui/Button';
 import { C } from '../ui/theme';
-import { forecastGoal, reminderHours, reminderCountFor } from '../logic/hydration';
+import { forecastGoal, reminderTimes, reminderCountFor, formatReminderTime } from '../logic/hydration';
 import { useStore } from '../store';
 import { fetchTodayHigh } from '../weather';
 import { scheduleReminders } from '../reminders';
@@ -24,7 +24,7 @@ export function Forecast({ pro, onPro }: { pro: boolean; onPro: () => void }) {
   useEffect(() => { load(); }, [load]);
 
   const f = forecastGoal({ baseMl: baseGoal, tempC, workoutMin: workout });
-  const hours = reminderHours(state.profile.wakeHour, state.profile.sleepHour, reminderCountFor(f.goalMl));
+  const times = reminderTimes(state.profile.wakeHour, state.profile.sleepHour, reminderCountFor(f.goalMl));
 
   const apply = async () => {
     if (!pro) {
@@ -88,10 +88,10 @@ export function Forecast({ pro, onPro }: { pro: boolean; onPro: () => void }) {
         <View style={{ backgroundColor: C.card, borderRadius: 24, padding: 20, gap: 10 }}>
           <Text style={{ fontWeight: '800', color: C.ink, fontSize: 18 }}>When to sip</Text>
           <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 6, height: 90 }}>
-            {hours.map((h, i) => (
-              <View key={`${h}-${i}`} style={{ flex: 1, alignItems: 'center', gap: 4 }}>
+            {times.map((t, i) => (
+              <View key={`${t.hour}-${t.minute}`} style={{ flex: 1, alignItems: 'center', gap: 4 }}>
                 <View style={{ width: '100%', height: 30 + ((i * 17) % 50), borderRadius: 8, backgroundColor: C.water }} />
-                <Text style={{ fontSize: 11, fontWeight: '800', color: C.sub }}>{h}h</Text>
+                <Text style={{ fontSize: 11, fontWeight: '800', color: C.sub }}>{formatReminderTime(t)}</Text>
               </View>
             ))}
           </View>
