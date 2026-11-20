@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pressable, ScrollView, Share, View } from 'react-native';
 import { Text } from '../ui/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,17 +7,23 @@ import { Pond } from '../ui/Pond';
 import { Button } from '../ui/Button';
 import { C } from '../ui/theme';
 import { PIPS, totalMl } from '../logic/hydration';
+import { STAGES, moodFor, pipLine } from '../logic/vitality';
 import { useStore } from '../store';
 
 const AMOUNTS = [150, 250, 350, 500];
 
 export function Home({ onSettings }: { onSettings: () => void }) {
-  const { state, todayKey, goalToday, streak, addWater, undoLast } = useStore();
+  const { state, todayKey, goalToday, streak, vitality, addWater, undoLast } = useStore();
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => { const t = setInterval(() => setNow(new Date()), 60_000); return () => clearInterval(t); }, []);
   const entries = state.log[todayKey] ?? [];
   const ml = totalMl(entries);
   const progress = ml / goalToday;
   const done = ml >= goalToday;
   const pip = PIPS.find((p) => p.id === state.activePip) ?? PIPS[0];
+  const mood = moodFor({ ml, goalMl: goalToday, now, wakeHour: state.profile.wakeHour, sleepHour: state.profile.sleepHour, lastSipT: entries.length ? entries[entries.length - 1].t : undefined });
+  const line = pipLine(pip.name, vitality, mood, goalToday - ml);
+  const stageIdx = STAGES.findIndex((st) => st.id === vitality.stage.id);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }} edges={['top']}>
@@ -31,15 +37,26 @@ export function Home({ onSettings }: { onSettings: () => void }) {
           </Pressable>
         </View>
 
-        <Pond progress={progress} size={290}>
-          <Pip def={pip} size={150} cheer={done} />
+        <Pond progress={progress} size={330}>
+          <Pip def={pip} size={310} vitality={vitality.value} mood={mood} live sipKey={entries.length} />
         </Pond>
 
         <View style={{ alignItems: 'center' }}>
           <Text style={{ fontSize: 40, fontWeight: '800', color: C.ink }}>{ml.toLocaleString()} ml</Text>
-          <Text style={{ fontSize: 16, fontWeight: '700', color: C.sub }}>
-            {done ? 'Goal reached. Pip is thrilled.' : `of ${goalToday.toLocaleString()} ml today`}
-          </Text>
+          <Text style={{ fontSize: 16, fontWeight: '700', color: C.sub }}>{`of ${goalToday.toLocaleString()} ml today`}</Text>
+        </View>
+
+        <View accessible accessibilityLabel={`${pip.name} is ${vitality.stage.label}, ${vitality.value} out of 100. ${line.title}. ${line.hint}`} style={{ alignSelf: 'stretch', backgroundColor: C.card, borderRadius: 24, padding: 16, gap: 10 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text style={{ fontSize: 18, fontWeight: '800', color: C.ink }}>{line.title}</Text>
+            <Text style={{ fontSize: 14, fontWeight: '800', color: vitality.yesterdayDelta < 0 ? '#D2506E' : C.mint }}>{vitality.stage.label}</Text>
+          </View>
+          <View style={{ flexDirection: 'row', gap: 5 }}>
+            {STAGES.map((st, i) => (
+              <View key={st.id} style={{ flex: 1, height: 10, borderRadius: 5, backgroundColor: i <= stageIdx ? (stageIdx <= 1 ? '#E58AA0' : C.water) : C.line }} />
+            ))}
+          </View>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: C.sub }}>{line.hint}</Text>
         </View>
 
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'center' }}>

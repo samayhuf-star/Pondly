@@ -35,7 +35,7 @@ function Stepper({ label, value, unit, onChange, min, max, step = 1 }: { label: 
 const hourLabel = (h: number) => `${((h + 11) % 12) + 1}${h < 12 ? ' am' : ' pm'}`;
 
 export function Onboarding() {
-  const { state, update, addWater } = useStore();
+  const { state, update } = useStore();
   const [step, setStep] = useState(0);
   const [sipped, setSipped] = useState(false);
   const p = state.profile;
@@ -57,7 +57,7 @@ export function Onboarding() {
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 18, paddingTop: 40 }}>
             <Pip def={PIPS[0]} size={190} cheer={sipped} />
             <Text style={{ fontSize: 34, fontWeight: '800', color: C.ink, textAlign: 'center' }}>Meet Pip</Text>
-            <Text style={{ fontSize: 18, color: C.sub, textAlign: 'center', fontWeight: '600' }}>Every sip fills Pip's pond. Try one.</Text>
+            <Text style={{ fontSize: 18, color: C.sub, textAlign: 'center', fontWeight: '600' }}>Every sip fills Pip&apos;s pond. Try one.</Text>
             {!sipped ? (
               <Button label="Sip 250 ml" onPress={() => { setSipped(true); }} style={{ alignSelf: 'stretch' }} />
             ) : (

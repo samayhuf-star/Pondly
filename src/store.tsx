@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { AppState } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Activity, Log, Profile, baseGoalMl, currentStreak, dayKey, lifetimeMl, unlockedPips } from './logic/hydration';
+import { Vitality, computeVitality } from './logic/vitality';
 
 const KEY = 'pondly.state.v1';
 const BACKUP_KEY = 'pondly.state.v1.unreadable';
@@ -39,6 +40,7 @@ interface Ctx {
   todayKey: string;
   goalToday: number;
   streak: number;
+  vitality: Vitality;
   unlocked: string[];
   update: (patch: Partial<State>) => void;
   addWater: (ml: number) => void;
@@ -106,7 +108,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const baseGoal = baseGoalMl(state.profile);
   const goalToday = state.goals[todayKey] ?? baseGoal;
-  const streak = currentStreak(state.log, state.goals, baseGoal, new Date(`${todayKey}T12:00:00`));
+  const todayDate = useMemo(() => new Date(`${todayKey}T12:00:00`), [todayKey]);
+  const streak = currentStreak(state.log, state.goals, baseGoal, todayDate);
+  const vitality = useMemo(() => computeVitality(state.log, state.goals, baseGoal, todayDate), [state.log, state.goals, baseGoal, todayDate]);
   const unlocked = useMemo(() => unlockedPips(Math.max(state.bestStreak, streak), lifetimeMl(state.log)), [state.bestStreak, streak, state.log]);
 
   const update = useCallback((patch: Partial<State>) => setState((s) => ({ ...s, ...patch })), []);
@@ -129,7 +133,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const setTodayGoal = useCallback((ml: number) => setState((s) => ({ ...s, goals: { ...s.goals, [todayRef.current]: ml } })), []);
   const reset = useCallback(() => { canSave.current = true; setState(initial); AsyncStorage.removeItem(KEY).catch(() => {}); }, []);
 
-  const value: Ctx = { ready, state, baseGoal, todayKey, goalToday, streak, unlocked, update, addWater, undoLast, setTodayGoal, reset };
+  const value: Ctx = { ready, state, baseGoal, todayKey, goalToday, streak, vitality, unlocked, update, addWater, undoLast, setTodayGoal, reset };
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;
 }
 

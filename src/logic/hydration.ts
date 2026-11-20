@@ -113,12 +113,12 @@ export interface PipDef {
 }
 
 export const PIPS: PipDef[] = [
-  { id: 'pip', name: 'Pip', body: '#FF8FA3', belly: '#FFD3DB', gill: '#E8537A', unlock: 'Starter', needStreak: 0, needTotalLitres: 0 },
-  { id: 'minty', name: 'Minty', body: '#8FE3CF', belly: '#D5F7EE', gill: '#2FB59B', unlock: '3-day streak', needStreak: 3, needTotalLitres: 0 },
-  { id: 'goldie', name: 'Goldie', body: '#FFD26A', belly: '#FFF0C2', gill: '#E7A31F', unlock: '10 litres logged', needStreak: 0, needTotalLitres: 10 },
-  { id: 'lilac', name: 'Lilac', body: '#C5B3FF', belly: '#EAE2FF', gill: '#8E75E6', unlock: '7-day streak', needStreak: 7, needTotalLitres: 0 },
-  { id: 'midnight', name: 'Midnight', body: '#7FA0D8', belly: '#C9D9F2', gill: '#3F5FA8', unlock: '30-day streak', needStreak: 30, needTotalLitres: 0 },
-  { id: 'cloud', name: 'Cloud', body: '#E6EEF5', belly: '#FFFFFF', gill: '#B7C7D6', unlock: '100 litres logged', needStreak: 0, needTotalLitres: 100 },
+  { id: 'pip', name: 'Pip', body: '#2F4A6D', belly: '#FFFFFF', gill: '#FF8FA3', unlock: 'Starter', needStreak: 0, needTotalLitres: 0 },
+  { id: 'minty', name: 'Minty', body: '#2A9D8F', belly: '#EFFFFB', gill: '#FFD26A', unlock: '3-day streak', needStreak: 3, needTotalLitres: 0 },
+  { id: 'goldie', name: 'Goldie', body: '#3A3A4A', belly: '#FFF3C4', gill: '#FFB020', unlock: '10 litres logged', needStreak: 0, needTotalLitres: 10 },
+  { id: 'lilac', name: 'Lilac', body: '#7A63D6', belly: '#F4F0FF', gill: '#FF8FA3', unlock: '7-day streak', needStreak: 7, needTotalLitres: 0 },
+  { id: 'midnight', name: 'Midnight', body: '#16233F', belly: '#DCE7F7', gill: '#5BB8F5', unlock: '30-day streak', needStreak: 30, needTotalLitres: 0 },
+  { id: 'cloud', name: 'Cloud', body: '#8FA3B5', belly: '#FFFFFF', gill: '#FFFFFF', unlock: '100 litres logged', needStreak: 0, needTotalLitres: 100 },
 ];
 
 export function unlockedPips(bestStreak: number, lifetimeMl: number): string[] {

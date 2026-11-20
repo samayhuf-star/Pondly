@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Animated, Easing, View } from 'react-native';
 import { C } from './theme';
 
 /** Circular pond whose water level rises with progress (0..1). */
 export function Pond({ progress, size, children }: { progress: number; size: number; children?: React.ReactNode }) {
-  const level = useRef(new Animated.Value(0)).current;
+  const [level] = useState(() => new Animated.Value(0));
   useEffect(() => {
     Animated.timing(level, { toValue: Math.min(1, Math.max(0, progress)), duration: 700, easing: Easing.out(Easing.cubic), useNativeDriver: false }).start();
   }, [progress, level]);

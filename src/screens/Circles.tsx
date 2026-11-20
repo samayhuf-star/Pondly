@@ -14,7 +14,7 @@ const input = { backgroundColor: C.card, borderRadius: 18, paddingHorizontal: 16
 
 /** Circles: private groups that share goal progress only, never what you drink. */
 export function Circles() {
-  const { state, todayKey, goalToday, update } = useStore();
+  const { state, todayKey, goalToday, vitality, update } = useStore();
   const ml = totalMl(state.log[todayKey] ?? []);
   const pct = Math.min(100, Math.round((ml / goalToday) * 100));
   const pip = PIPS.find((p) => p.id === state.activePip) ?? PIPS[0];
@@ -26,13 +26,14 @@ export function Circles() {
   const [offline, setOffline] = useState(false);
   const [token] = useState(() => state.circleToken || newToken());
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(() => {
     if (!state.circleCode) return;
-    try { setView(await syncCircle(state.circleCode, state.circleToken, pct)); setOffline(false); }
-    catch (e) {
-      if ((e as Error).message === 'Not a member') update({ circleCode: '' });
-      else setOffline(true);
-    }
+    syncCircle(state.circleCode, state.circleToken, pct)
+      .then((v) => { setView(v); setOffline(false); })
+      .catch((e: Error) => {
+        if (e.message === 'Not a member') update({ circleCode: '' });
+        else setOffline(true);
+      });
   }, [state.circleCode, state.circleToken, pct, update]);
 
   useEffect(() => { refresh(); const t = setInterval(refresh, 30000); return () => clearInterval(t); }, [refresh]);
@@ -63,7 +64,7 @@ export function Circles() {
         <ScrollView contentContainerStyle={{ padding: 20, gap: 14 }} keyboardShouldPersistTaps="handled">
           <Text style={{ fontSize: 30, fontWeight: '800', color: C.ink }}>Circles</Text>
           <View style={{ backgroundColor: C.blueSoft, borderRadius: 28, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-            <Pond progress={ml / goalToday} size={96}><Pip def={pip} size={52} /></Pond>
+            <Pond progress={ml / goalToday} size={96}><Pip def={pip} size={60} vitality={vitality.value} /></Pond>
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 20, fontWeight: '800', color: C.ink }}>Fill one pond together</Text>
               <Text style={{ fontSize: 15, fontWeight: '600', color: C.sub }}>Friends see your goal progress only, never what you drink.</Text>
@@ -90,7 +91,7 @@ export function Circles() {
           <Button label="Invite" kind="soft" onPress={() => invite(state.circleCode)} style={{ minHeight: 44 }} />
         </View>
         <View style={{ backgroundColor: C.blueSoft, borderRadius: 28, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-          <Pond progress={members.length ? done / members.length : 0} size={96}><Pip def={pip} size={52} /></Pond>
+          <Pond progress={members.length ? done / members.length : 0} size={96}><Pip def={pip} size={60} vitality={vitality.value} /></Pond>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 22, fontWeight: '800', color: C.ink }}>{done} of {members.length || 1} hit goal</Text>
             <Text style={{ fontSize: 15, fontWeight: '600', color: C.sub }}>Code {state.circleCode}</Text>
