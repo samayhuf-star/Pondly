@@ -55,6 +55,9 @@
       "eas": {
         "projectId": "3c3e4cf9-8737-45b1-8057-e0d694e955e8"
       }
+    },
+    "android": {
+      "package": "com.samay.pondly"
     }
   }
 }
