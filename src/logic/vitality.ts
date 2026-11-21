@@ -140,7 +140,7 @@ export interface Line {
 
 /** What Pip says and what the person should do, in plain words. */
 export function pipLine(name: string, v: Vitality, mood: Mood, mlToGoal: number): Line {
-  const left = Math.max(0, Math.round(mlToGoal / 50) * 50);
+  const left = Math.max(0, Math.round(mlToGoal / 50) * 50).toLocaleString('en-US');
   if (mood === 'thrilled') return { title: `${name} is thriving today`, hint: 'Goal reached. Keep it up tomorrow and Pip keeps growing.' };
   if (mood === 'sleeping') return { title: `${name} is asleep`, hint: 'Resting until your morning. A sip now still counts.' };
   if (mood === 'parched') return { title: `${name} is parched`, hint: `Drink ${left} ml to bring ${name} back.` };

@@ -27,7 +27,7 @@ export function Home({ onSettings }: { onSettings: () => void }) {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }} edges={['top']}>
-      <ScrollView contentContainerStyle={{ padding: 20, gap: 18, alignItems: 'center' }}>
+      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40, gap: 18, alignItems: 'center' }}>
         <View style={{ flexDirection: 'row', alignSelf: 'stretch', justifyContent: 'space-between', alignItems: 'center' }}>
           <View style={{ backgroundColor: C.card, borderRadius: 20, paddingHorizontal: 14, paddingVertical: 8 }}>
             <Text style={{ fontWeight: '800', color: C.ink }}>{streak} day streak</Text>
@@ -49,7 +49,7 @@ export function Home({ onSettings }: { onSettings: () => void }) {
         <View accessible accessibilityLabel={`${pip.name} is ${vitality.stage.label}, ${vitality.value} out of 100. ${line.title}. ${line.hint}`} style={{ alignSelf: 'stretch', backgroundColor: C.card, borderRadius: 24, padding: 16, gap: 10 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <Text style={{ fontSize: 18, fontWeight: '800', color: C.ink }}>{line.title}</Text>
-            <Text style={{ fontSize: 14, fontWeight: '800', color: vitality.yesterdayDelta < 0 ? '#D2506E' : C.mint }}>{vitality.stage.label}</Text>
+            <Text style={{ fontSize: 14, fontWeight: '800', color: vitality.yesterdayDelta < 0 || stageIdx <= 1 ? '#D2506E' : C.mint }}>{vitality.stage.label}</Text>
           </View>
           <View style={{ flexDirection: 'row', gap: 5 }}>
             {STAGES.map((st, i) => (
@@ -59,9 +59,9 @@ export function Home({ onSettings }: { onSettings: () => void }) {
           <Text style={{ fontSize: 14, fontWeight: '700', color: C.sub }}>{line.hint}</Text>
         </View>
 
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'center' }}>
+        <View style={{ flexDirection: 'row', gap: 8, alignSelf: 'stretch' }}>
           {AMOUNTS.map((a) => (
-            <Button key={a} label={`+${a}`} kind="soft" onPress={() => addWater(a)} style={{ minWidth: 76 }} />
+            <Button key={a} label={`+${a}`} kind="soft" onPress={() => addWater(a)} style={{ flex: 1, paddingHorizontal: 4 }} />
           ))}
         </View>
         <View style={{ flexDirection: 'row', gap: 10 }}>
