@@ -1,21 +1,21 @@
 import { Platform } from 'react-native';
 import Purchases, { LOG_LEVEL, type CustomerInfo } from 'react-native-purchases';
 import RevenueCatUI, { PAYWALL_RESULT } from 'react-native-purchases-ui';
-import { PRO_ENTITLEMENT, REVENUECAT_IOS_KEY, revenueCatConfigured } from './config';
+import { PRO_ENTITLEMENT, REVENUECAT_KEY, revenueCatConfigured } from './config';
 
 let started = false;
 
 export function initPurchases(): void {
-  if (started || Platform.OS !== 'ios') return;
+  if (started || (Platform.OS !== 'ios' && Platform.OS !== 'android')) return;
   if (!revenueCatConfigured) {
     if (__DEV__) console.warn('Pondly: EXPO_PUBLIC_RC_IOS_KEY is not set; Pro purchases are disabled in this build.');
     return;
   }
   if (__DEV__) void Purchases.setLogLevel(LOG_LEVEL.DEBUG);
-  Purchases.configure({ apiKey: REVENUECAT_IOS_KEY });
+  Purchases.configure({ apiKey: REVENUECAT_KEY });
   started = true;
   // Apple Search Ads attribution, no user prompt needed.
-  void Purchases.enableAdServicesAttributionTokenCollection();
+  if (Platform.OS === 'ios') void Purchases.enableAdServicesAttributionTokenCollection();
 }
 
 /** Keeps the Pro flag in sync when a purchase, renewal, expiry or refund happens outside the paywall. */
