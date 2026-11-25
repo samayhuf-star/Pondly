@@ -81,9 +81,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [attempt, setAttempt] = useState(0);
   const [todayKey, setTodayKey] = useState(() => dayKey(new Date()));
   const todayRef = useRef(todayKey);
-  todayRef.current = todayKey;
+  useEffect(() => { todayRef.current = todayKey; }, [todayKey]);
   const stateRef = useRef(state);
-  stateRef.current = state;
+  useEffect(() => { stateRef.current = state; }, [state]);
 
   useEffect(() => {
     let cancelled = false;
