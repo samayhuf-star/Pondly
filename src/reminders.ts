@@ -6,7 +6,7 @@ Notifications.setNotificationHandler({
 });
 
 const LINES = [
-  'Pip is thirsty. Time for a sip?',
+  'Capy is thirsty. Time for a sip?',
   'A small glass now keeps the pond full.',
   'Quick sip break. Your pond is waiting.',
   'Water check: how about 250 ml?',

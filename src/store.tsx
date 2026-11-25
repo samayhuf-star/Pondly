@@ -1,8 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Activity, Log, Profile, baseGoalMl, currentStreak, dayKey, lifetimeMl, unlockedPips } from './logic/hydration';
+import { Activity, Log, Profile, baseGoalMl, currentStreak, dayKey, lifetimeMl, unlockedSkins } from './logic/hydration';
 import { Vitality, computeVitality } from './logic/vitality';
+import { LevelInfo, levelFor, totalXp } from './logic/progress';
+import { ChestResult, rollChest } from './logic/gear';
 
 const KEY = 'pondly.state.v1';
 const BACKUP_KEY = 'pondly.state.v1.unreadable';
@@ -18,6 +20,15 @@ export interface State {
   circleCode: string;
   circleToken: string;
   displayName: string;
+  petName: string;
+  /** Day keys whose daily chest has been opened. */
+  chestsClaimed: string[];
+  ownedGear: string[];
+  equippedGear: string[];
+  /** XP from chests, on top of XP derived from the water log. */
+  bonusXp: number;
+  /** Answers from the onboarding questions. */
+  answers: Record<string, string>;
 }
 
 const initial: State = {
@@ -25,12 +36,18 @@ const initial: State = {
   profile: { weightKg: 65, activity: 'moderate' as Activity, wakeHour: 7, sleepHour: 23 },
   log: {},
   goals: {},
-  activePip: 'pip',
+  activePip: 'capy',
   bestStreak: 0,
   remindersOn: false,
   circleCode: '',
   circleToken: '',
   displayName: '',
+  petName: 'Capy',
+  chestsClaimed: [],
+  ownedGear: [],
+  equippedGear: [],
+  bonusXp: 0,
+  answers: {},
 };
 
 interface Ctx {
@@ -42,6 +59,11 @@ interface Ctx {
   streak: number;
   vitality: Vitality;
   unlocked: string[];
+  xp: number;
+  level: LevelInfo;
+  /** Goal reached today and the chest not opened yet. */
+  chestReady: boolean;
+  claimChest: () => ChestResult | null;
   update: (patch: Partial<State>) => void;
   addWater: (ml: number) => void;
   undoLast: () => void;
@@ -60,6 +82,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [todayKey, setTodayKey] = useState(() => dayKey(new Date()));
   const todayRef = useRef(todayKey);
   todayRef.current = todayKey;
+  const stateRef = useRef(state);
+  stateRef.current = state;
 
   useEffect(() => {
     let cancelled = false;
@@ -111,7 +135,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const todayDate = useMemo(() => new Date(`${todayKey}T12:00:00`), [todayKey]);
   const streak = currentStreak(state.log, state.goals, baseGoal, todayDate);
   const vitality = useMemo(() => computeVitality(state.log, state.goals, baseGoal, todayDate), [state.log, state.goals, baseGoal, todayDate]);
-  const unlocked = useMemo(() => unlockedPips(Math.max(state.bestStreak, streak), lifetimeMl(state.log)), [state.bestStreak, streak, state.log]);
+  const unlocked = useMemo(() => unlockedSkins(Math.max(state.bestStreak, streak), lifetimeMl(state.log)), [state.bestStreak, streak, state.log]);
+
+  const xp = useMemo(() => totalXp(state.log, state.goals, baseGoal, state.bonusXp), [state.log, state.goals, baseGoal, state.bonusXp]);
+  const level = useMemo(() => levelFor(xp), [xp]);
+  const todayMl = (state.log[todayKey] ?? []).reduce((a, e) => a + e.ml, 0);
+  const chestReady = todayMl >= goalToday && !state.chestsClaimed.includes(todayKey);
 
   const update = useCallback((patch: Partial<State>) => setState((s) => ({ ...s, ...patch })), []);
   const addWater = useCallback((ml: number) => {
@@ -131,9 +160,25 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
   const setTodayGoal = useCallback((ml: number) => setState((s) => ({ ...s, goals: { ...s.goals, [todayRef.current]: ml } })), []);
+  const claimChest = useCallback((): ChestResult | null => {
+    const k = todayRef.current;
+    const st = stateRef.current;
+    const ml = (st.log[k] ?? []).reduce((a, e) => a + e.ml, 0);
+    if (st.chestsClaimed.includes(k) || ml < (st.goals[k] ?? baseGoalMl(st.profile))) return null;
+    const streakNow = currentStreak(st.log, st.goals, baseGoalMl(st.profile), new Date(`${k}T12:00:00`));
+    const result = rollChest(streakNow, st.ownedGear);
+    setState((s) => ({
+      ...s,
+      chestsClaimed: [...s.chestsClaimed, k],
+      ownedGear: result.gearId && !s.ownedGear.includes(result.gearId) ? [...s.ownedGear, result.gearId] : s.ownedGear,
+      equippedGear: result.gearId && s.equippedGear.length === 0 ? [result.gearId] : s.equippedGear,
+      bonusXp: s.bonusXp + result.xp,
+    }));
+    return result;
+  }, []);
   const reset = useCallback(() => { canSave.current = true; setState(initial); AsyncStorage.removeItem(KEY).catch(() => {}); }, []);
 
-  const value: Ctx = { ready, state, baseGoal, todayKey, goalToday, streak, vitality, unlocked, update, addWater, undoLast, setTodayGoal, reset };
+  const value: Ctx = { ready, state, baseGoal, todayKey, goalToday, streak, vitality, unlocked, xp, level, chestReady, claimChest, update, addWater, undoLast, setTodayGoal, reset };
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;
 }
 

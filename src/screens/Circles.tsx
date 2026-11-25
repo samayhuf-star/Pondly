@@ -2,11 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, ScrollView, Share, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '../ui/Text';
-import { Pip } from '../ui/Pip';
+import { Capy } from '../ui/Capy';
 import { Pond } from '../ui/Pond';
 import { Button } from '../ui/Button';
 import { C } from '../ui/theme';
-import { PIPS, totalMl } from '../logic/hydration';
+import { SKINS, totalMl } from '../logic/hydration';
 import { useStore } from '../store';
 import { CircleView, blockMember, createCircle, joinCircle, leaveCircle, newToken, nudgeMember, reportMember, syncCircle } from '../circles';
 
@@ -17,7 +17,7 @@ export function Circles() {
   const { state, todayKey, goalToday, vitality, update } = useStore();
   const ml = totalMl(state.log[todayKey] ?? []);
   const pct = Math.min(100, Math.round((ml / goalToday) * 100));
-  const pip = PIPS.find((p) => p.id === state.activePip) ?? PIPS[0];
+  const pip = SKINS.find((p) => p.id === state.activePip) ?? SKINS[0];
   const [view, setView] = useState<CircleView | null>(null);
   const [busy, setBusy] = useState(false);
   const [name, setName] = useState(state.displayName);
@@ -64,7 +64,7 @@ export function Circles() {
         <ScrollView contentContainerStyle={{ padding: 20, gap: 14 }} keyboardShouldPersistTaps="handled">
           <Text style={{ fontSize: 30, fontWeight: '800', color: C.ink }}>Circles</Text>
           <View style={{ backgroundColor: C.blueSoft, borderRadius: 28, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-            <Pond progress={ml / goalToday} size={96}><Pip def={pip} size={60} vitality={vitality.value} /></Pond>
+            <Pond progress={ml / goalToday} size={96}><Capy def={pip} size={60} vitality={vitality.value} gear={state.equippedGear} /></Pond>
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 20, fontWeight: '800', color: C.ink }}>Fill one pond together</Text>
               <Text style={{ fontSize: 15, fontWeight: '600', color: C.sub }}>Friends see your goal progress only, never what you drink.</Text>
@@ -91,7 +91,7 @@ export function Circles() {
           <Button label="Invite" kind="soft" onPress={() => invite(state.circleCode)} style={{ minHeight: 44 }} />
         </View>
         <View style={{ backgroundColor: C.blueSoft, borderRadius: 28, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-          <Pond progress={members.length ? done / members.length : 0} size={96}><Pip def={pip} size={60} vitality={vitality.value} /></Pond>
+          <Pond progress={members.length ? done / members.length : 0} size={96}><Capy def={pip} size={60} vitality={vitality.value} gear={state.equippedGear} /></Pond>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 22, fontWeight: '800', color: C.ink }}>{done} of {members.length || 1} hit goal</Text>
             <Text style={{ fontSize: 15, fontWeight: '600', color: C.sub }}>Code {state.circleCode}</Text>

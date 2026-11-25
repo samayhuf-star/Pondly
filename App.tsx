@@ -21,7 +21,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'today', label: 'Today' },
   { id: 'forecast', label: 'Forecast' },
   { id: 'circles', label: 'Circles' },
-  { id: 'pips', label: 'Pips' },
+  { id: 'pips', label: 'Capy' },
 ];
 
 function Root() {

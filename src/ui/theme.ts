@@ -1,14 +1,15 @@
 export const C = {
-  bg: '#F3FAFF',
-  sky: '#E4F3FF',
+  bg: '#F4FBF7',
+  sky: '#E3F5EE',
   card: '#FFFFFF',
-  ink: '#0B2A3C',
-  sub: '#355166',
-  blue: '#0F6FBF',
-  blueSoft: '#CFEBFF',
-  water: '#5BB8F5',
+  ink: '#0F3D3E',
+  sub: '#3F6465',
+  blue: '#1F7A78',
+  blueSoft: '#BFE8D8',
+  water: '#4FC3B5',
   gold: '#FFC94A',
   mint: '#2FB59B',
-  line: '#D5E6F2',
+  line: '#D3E8DF',
+  apricot: '#FF9F5A',
 };
 export const R = { card: 24, pill: 999 };

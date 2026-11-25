@@ -3,25 +3,27 @@ import { AccessibilityInfo, Animated, Easing, View } from 'react-native';
 import Svg, { Ellipse, Circle, Path, G } from 'react-native-svg';
 import { PipDef } from '../logic/hydration';
 import { Mood, stageFor } from '../logic/vitality';
-import { buildPip } from './pipShapes';
+import { buildCapy } from './capyShapes';
 
 interface Props {
   def: PipDef;
   size?: number;
   /** Forces the happy goal-reached pose (kept for older call sites). */
   cheer?: boolean;
-  /** 0..100. How grown and healthy Pip is. Default shows a healthy Pip. */
+  /** 0..100. How grown and healthy the capybara is. Default shows a healthy capybara. */
   vitality?: number;
   mood?: Mood;
-  /** Turn on breathing, blinking, gill flutter and sip reactions. Off by default so lists stay cheap. */
+  /** Turn on breathing, blinking, ear wiggle and sip reactions. Off by default so lists stay cheap. */
   live?: boolean;
-  /** Change this value (e.g. number of sips today) to make Pip react to a sip. */
+  /** Change this value (e.g. number of sips today) to make the capybara react to a sip. */
   sipKey?: number;
+  /** Worn gear ids. */
+  gear?: string[];
 }
 
 const VIEW = '-24 -24 248 248';
 
-export function Pip({ def, size = 120, cheer = false, vitality = 60, mood = 'happy', live = false, sipKey = 0 }: Props) {
+export function Capy({ def, size = 120, cheer = false, vitality = 60, mood = 'happy', live = false, sipKey = 0, gear }: Props) {
   const [blink, setBlink] = useState(false);
   const [sway, setSway] = useState(0);
   const [reduceMotion, setReduceMotion] = useState(false);
@@ -94,7 +96,7 @@ export function Pip({ def, size = 120, cheer = false, vitality = 60, mood = 'hap
     hop.interpolate({ inputRange: [0, 1], outputRange: [1, 1.06] }),
   );
 
-  const { shapes, scale } = useMemo(() => buildPip(def, { vitality, mood, cheer, blink: animate && blink, sway: animate ? sway : 0 }), [def, vitality, mood, cheer, animate, blink, sway]);
+  const { shapes, scale } = useMemo(() => buildCapy(def, { vitality, mood, cheer, blink: animate && blink, sway: animate ? sway : 0, gear }), [def, vitality, mood, cheer, animate, blink, sway, gear]);
   const tx = 100 - 100 * scale;
   const ty = 180 - 180 * scale;
   const stage = stageFor(vitality);
@@ -106,7 +108,7 @@ export function Pip({ def, size = 120, cheer = false, vitality = 60, mood = 'hap
   ];
 
   return (
-    <View style={{ width: size, height: size }} accessible accessibilityLabel={`${def.name} the penguin, ${stage.label.toLowerCase()}, ${effective}`}>
+    <View style={{ width: size, height: size }} accessible accessibilityLabel={`${def.name} the capybara, ${stage.label.toLowerCase()}, ${effective}`}>
       <Animated.View style={{ width: size, height: size, transform: [{ translateY }, { scaleY }] }}>
         <Svg width={size} height={size} viewBox={VIEW}>
           <G transform={`translate(${tx} ${ty}) scale(${scale})`}>

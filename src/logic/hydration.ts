@@ -112,17 +112,17 @@ export interface PipDef {
   needTotalLitres: number;
 }
 
-export const PIPS: PipDef[] = [
-  { id: 'pip', name: 'Pip', body: '#2F4A6D', belly: '#FFFFFF', gill: '#FF8FA3', unlock: 'Starter', needStreak: 0, needTotalLitres: 0 },
-  { id: 'minty', name: 'Minty', body: '#2A9D8F', belly: '#EFFFFB', gill: '#FFD26A', unlock: '3-day streak', needStreak: 3, needTotalLitres: 0 },
-  { id: 'goldie', name: 'Goldie', body: '#3A3A4A', belly: '#FFF3C4', gill: '#FFB020', unlock: '10 litres logged', needStreak: 0, needTotalLitres: 10 },
-  { id: 'lilac', name: 'Lilac', body: '#7A63D6', belly: '#F4F0FF', gill: '#FF8FA3', unlock: '7-day streak', needStreak: 7, needTotalLitres: 0 },
-  { id: 'midnight', name: 'Midnight', body: '#16233F', belly: '#DCE7F7', gill: '#5BB8F5', unlock: '30-day streak', needStreak: 30, needTotalLitres: 0 },
-  { id: 'cloud', name: 'Cloud', body: '#8FA3B5', belly: '#FFFFFF', gill: '#FFFFFF', unlock: '100 litres logged', needStreak: 0, needTotalLitres: 100 },
+export const SKINS: PipDef[] = [
+  { id: 'capy', name: 'Capy', body: '#B07A4F', belly: '#E8CBA6', gill: '#FF9F8A', unlock: 'Starter', needStreak: 0, needTotalLitres: 0 },
+  { id: 'mochi', name: 'Mochi', body: '#D9B88F', belly: '#FFF3DD', gill: '#FF8FA3', unlock: '3-day streak', needStreak: 3, needTotalLitres: 0 },
+  { id: 'toast', name: 'Toast', body: '#8A5A36', belly: '#E3C29A', gill: '#FFB020', unlock: '10 litres logged', needStreak: 0, needTotalLitres: 10 },
+  { id: 'blossom', name: 'Blossom', body: '#C9906E', belly: '#FBE3DA', gill: '#FF6FA0', unlock: '7-day streak', needStreak: 7, needTotalLitres: 0 },
+  { id: 'midnight', name: 'Midnight', body: '#5B4636', belly: '#CDBBA8', gill: '#5BB8F5', unlock: '30-day streak', needStreak: 30, needTotalLitres: 0 },
+  { id: 'cloud', name: 'Cloud', body: '#B8B2AA', belly: '#F4F1EC', gill: '#9FD6F2', unlock: '100 litres logged', needStreak: 0, needTotalLitres: 100 },
 ];
 
-export function unlockedPips(bestStreak: number, lifetimeMl: number): string[] {
-  return PIPS.filter(
+export function unlockedSkins(bestStreak: number, lifetimeMl: number): string[] {
+  return SKINS.filter(
     (p) => (p.needStreak === 0 && p.needTotalLitres === 0) || (p.needStreak > 0 && bestStreak >= p.needStreak) || (p.needTotalLitres > 0 && lifetimeMl / 1000 >= p.needTotalLitres),
   ).map((p) => p.id);
 }

@@ -1,4 +1,4 @@
-import { baseGoalMl, forecastGoal, reminderTimes, reminderCountFor, currentStreak, dayKey, unlockedPips, totalMl } from './hydration';
+import { baseGoalMl, forecastGoal, reminderTimes, reminderCountFor, currentStreak, dayKey, unlockedSkins, totalMl } from './hydration';
 
 describe('baseGoalMl', () => {
   it('uses 33 ml per kg rounded to 50', () => {
@@ -75,9 +75,9 @@ describe('currentStreak', () => {
 
 describe('pips and totals', () => {
   it('unlocks by streak and litres', () => {
-    expect(unlockedPips(0, 0)).toEqual(['pip']);
-    expect(unlockedPips(7, 0)).toEqual(['pip', 'minty', 'lilac']);
-    expect(unlockedPips(0, 10000)).toContain('goldie');
+    expect(unlockedSkins(0, 0)).toEqual(['capy']);
+    expect(unlockedSkins(7, 0)).toEqual(['capy', 'mochi', 'blossom']);
+    expect(unlockedSkins(0, 10000)).toContain('toast');
   });
   it('sums entries', () => {
     expect(totalMl([{ t: 1, ml: 250 }, { t: 2, ml: 500 }])).toBe(750);
