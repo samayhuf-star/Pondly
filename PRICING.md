@@ -1,10 +1,21 @@
-# Pricing (decision of 17 Nov 2026)
+# Pricing (standard of 22 Nov 2026, replaces the 17 Nov weekly-only plan)
 
-One plan for the app: **weekly subscription, $1.99 per week, 7-day free trial** (new subscribers).
-Applies to every app except Klenzer. Monthly, yearly and lifetime plans are retired from the paywall.
+Plans, all behind a 7-day free trial:
 
-## Store and RevenueCat setup to match
-- App Store Connect: auto-renewing subscription `pondly_pro_weekly`, duration 1 week, price $1.99 (US tier), introductory offer = free trial, 1 week, all territories.
-- Google Play (where the app ships there): matching base plan, weekly, $1.99, free-trial offer of 7 days. The app is a free download with the subscription inside it (Play does not allow a trial on an upfront-paid app).
-- RevenueCat: entitlement `pro` attached to the weekly product; `default` offering has one WEEKLY package; paywall copy reads "7 days free, then $1.99/week".
-- Remove old monthly / yearly / lifetime packages from the offering. Do not delete the old products if anyone already bought them; they stay recognised.
+| Plan | Price | Product id |
+|---|---|---|
+| Weekly | $2.99 | `pondly_pro_weekly` |
+| Monthly | $5.99 | `pondly_pro_monthly` |
+| Annual | $29.99 | `pondly_pro_annual` |
+| Lifetime | $39.99 | `pondly_pro_lifetime` |
+
+## Where each plan shows
+- Paywall (right after the 11 onboarding steps): weekly, monthly, annual. Small close button after a few seconds.
+- Lifetime: shown only in Settings, and only to people already paying on weekly, monthly or annual.
+- Settings: upgrade to any plan.
+
+## Store and RevenueCat setup to match (not done yet)
+- RevenueCat: entitlement `pro`; `default` offering with WEEKLY, MONTHLY, ANNUAL packages; a separate `lifetime` offering for Settings; hosted paywall with a delayed close button.
+- App Store Connect: auto-renewing subscriptions (one subscription group) for weekly, monthly, annual with a 7-day free-trial introductory offer; lifetime as a non-consumable.
+- Google Play (when Android ships): matching base plans and a 7-day free-trial offer.
+- Every plan must exist in both stores and be linked in RevenueCat before the app is submitted.

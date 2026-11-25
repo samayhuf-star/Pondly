@@ -32,7 +32,7 @@
         "expo-splash-screen",
         {
           "image": "./assets/splash-icon.png",
-          "backgroundColor": "#E4F3FF",
+          "backgroundColor": "#E3F5EE",
           "imageWidth": 200
         }
       ],
@@ -45,10 +45,16 @@
       [
         "expo-notifications",
         {
-          "color": "#0F6FBF"
+          "color": "#1F7A78"
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "onesignal-expo-plugin",
+        {
+          "mode": "production"
+        }
+      ]
     ],
     "owner": "krosz",
     "extra": {

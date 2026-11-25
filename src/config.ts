@@ -6,3 +6,5 @@ export const PRIVACY_URL = 'https://samayhuf-star.github.io/app-legal/pondly/pri
 export const TERMS_URL = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
 export const SUPPORT_EMAIL = 'samayhuf@gmail.com';
 export const revenueCatConfigured = REVENUECAT_IOS_KEY.startsWith('appl_');
+// OneSignal app id (a public id, not a secret). Set EXPO_PUBLIC_ONESIGNAL_APP_ID in the EAS environment.
+export const ONESIGNAL_APP_ID = process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID ?? '';
