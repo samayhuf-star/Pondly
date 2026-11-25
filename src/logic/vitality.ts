@@ -1,12 +1,12 @@
 import { Log, dayKey, totalMl, clamp } from './hydration';
 
 /**
- * Vitality is how healthy and grown Capy is, 0..100. It is derived entirely from the
+ * Vitality is how healthy and grown the bear is, 0..100. It is derived entirely from the
  * water log, so it needs no extra storage and old logs work straight away.
  *
- * Each COMPLETED day moves it: goal met grows Capy, a shortfall shrinks Capy, and a day
- * with nothing logged shrinks Capy the most. Today only ever adds (up to +8 as you
- * drink), so Capy never shrinks mid-day; the penalty lands when the day closes.
+ * Each COMPLETED day moves it: goal met grows the bear, a shortfall shrinks the bear, and a day
+ * with nothing logged shrinks the bear the most. Today only ever adds (up to +8 as you
+ * drink), so the bear never shrinks mid-day; the penalty lands when the day closes.
  */
 export const START_VITALITY = 50;
 const MAX_LOOKBACK_DAYS = 60;
@@ -48,7 +48,7 @@ export interface Vitality {
   value: number;
   /** Vitality at the start of today (all finished days only). */
   base: number;
-  /** How much the last finished day changed Capy (negative = shrank). */
+  /** How much the last finished day changed the bear (negative = shrank). */
   yesterdayDelta: number;
   stage: StageInfo;
 }
@@ -88,7 +88,7 @@ export function computeVitality(log: Log, goals: Record<string, number>, fallbac
   return { value, base, yesterdayDelta, stage: stageFor(value) };
 }
 
-/** Body size multiplier: a frail Capy is small, a thriving Capy is big. */
+/** Body size multiplier: a frail the bear is small, a thriving the bear is big. */
 export function scaleFor(vitality: number): number {
   return 0.62 + (clamp(vitality, 0, 100) / 100) * 0.5;
 }
@@ -138,10 +138,10 @@ export interface Line {
   hint: string;
 }
 
-/** What Capy says and what the person should do, in plain words. */
+/** What the bear says and what the person should do, in plain words. */
 export function pipLine(name: string, v: Vitality, mood: Mood, mlToGoal: number): Line {
   const left = Math.max(0, Math.round(mlToGoal / 50) * 50).toLocaleString('en-US');
-  if (mood === 'thrilled') return { title: `${name} is thriving today`, hint: 'Goal reached. Keep it up tomorrow and Capy keeps growing.' };
+  if (mood === 'thrilled') return { title: `${name} is thriving today`, hint: 'Goal reached. Keep it up tomorrow and your bear keeps growing.' };
   if (mood === 'sleeping') return { title: `${name} is asleep`, hint: 'Resting until your morning. A sip now still counts.' };
   if (mood === 'parched') return { title: `${name} is parched`, hint: `Drink ${left} ml to bring ${name} back.` };
   if (mood === 'thirsty') return { title: `${name} is getting thirsty`, hint: `${left} ml to go. A glass now helps.` };

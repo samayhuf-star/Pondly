@@ -75,9 +75,9 @@ describe('currentStreak', () => {
 
 describe('pips and totals', () => {
   it('unlocks by streak and litres', () => {
-    expect(unlockedSkins(0, 0)).toEqual(['capy']);
-    expect(unlockedSkins(7, 0)).toEqual(['capy', 'mochi', 'blossom']);
-    expect(unlockedSkins(0, 10000)).toContain('toast');
+    expect(unlockedSkins(0, 0)).toEqual(['bruno']);
+    expect(unlockedSkins(7, 0)).toEqual(['bruno', 'honey', 'blossom']);
+    expect(unlockedSkins(0, 10000)).toContain('cocoa');
   });
   it('sums entries', () => {
     expect(totalMl([{ t: 1, ml: 250 }, { t: 2, ml: 500 }])).toBe(750);

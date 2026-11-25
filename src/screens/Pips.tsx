@@ -13,7 +13,7 @@ export function Pips() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }} edges={['top']}>
       <ScrollView contentContainerStyle={{ padding: 20, gap: 14 }}>
-        <Text style={{ fontSize: 30, fontWeight: '800', color: C.ink }}>Your Capybaras</Text>
+        <Text style={{ fontSize: 30, fontWeight: '800', color: C.ink }}>Your Bears</Text>
         <Text style={{ color: C.sub, fontWeight: '700' }}>{unlocked.length} of {SKINS.length} collected</Text>
         <Text style={{ fontSize: 20, fontWeight: '800', color: C.ink }}>Gear from your daily chest</Text>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>

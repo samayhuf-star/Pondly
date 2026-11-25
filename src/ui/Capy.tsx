@@ -10,12 +10,12 @@ interface Props {
   size?: number;
   /** Forces the happy goal-reached pose (kept for older call sites). */
   cheer?: boolean;
-  /** 0..100. How grown and healthy the capybara is. Default shows a healthy capybara. */
+  /** 0..100. How grown and healthy the bear is. Default shows a healthy bear. */
   vitality?: number;
   mood?: Mood;
   /** Turn on breathing, blinking, ear wiggle and sip reactions. Off by default so lists stay cheap. */
   live?: boolean;
-  /** Change this value (e.g. number of sips today) to make the capybara react to a sip. */
+  /** Change this value (e.g. number of sips today) to make the bear react to a sip. */
   sipKey?: number;
   /** Worn gear ids. */
   gear?: string[];
@@ -108,7 +108,7 @@ export function Capy({ def, size = 120, cheer = false, vitality = 60, mood = 'ha
   ];
 
   return (
-    <View style={{ width: size, height: size }} accessible accessibilityLabel={`${def.name} the capybara, ${stage.label.toLowerCase()}, ${effective}`}>
+    <View style={{ width: size, height: size }} accessible accessibilityLabel={`${def.name} the bear, ${stage.label.toLowerCase()}, ${effective}`}>
       <Animated.View style={{ width: size, height: size, transform: [{ translateY }, { scaleY }] }}>
         <Svg width={size} height={size} viewBox={VIEW}>
           <G transform={`translate(${tx} ${ty}) scale(${scale})`}>

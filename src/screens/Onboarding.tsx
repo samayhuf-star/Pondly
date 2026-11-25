@@ -45,8 +45,8 @@ interface Question {
 }
 
 const QUESTIONS: Record<string, Question> = {
-  intake: { key: 'intake', title: 'How much water do you drink now?', sub: 'No wrong answer. Capy just wants a starting line.', options: ['Barely any', 'A few glasses', 'About enough', 'A lot already'] },
-  reason: { key: 'reason', title: 'Why do you want to drink more?', sub: 'Capy will cheer for this.', options: ['More energy', 'Better skin', 'Fitness', 'Headaches and focus', 'Just healthier'] },
+  intake: { key: 'intake', title: 'How much water do you drink now?', sub: 'No wrong answer. Bruno just wants a starting line.', options: ['Barely any', 'A few glasses', 'About enough', 'A lot already'] },
+  reason: { key: 'reason', title: 'Why do you want to drink more?', sub: 'Your bear will cheer for this.', options: ['More energy', 'Better skin', 'Fitness', 'Headaches and focus', 'Just healthier'] },
   forget: { key: 'forget', title: 'When do you forget most?', sub: 'Reminders will lean on this.', options: ['Mornings', 'At work or school', 'Afternoons', 'Evenings', 'All day'] },
   pond: { key: 'pond', title: 'Who shares your pond?', sub: 'A shared pond stays healthy when everyone drinks. You can invite people later in Circles.', options: ['My family', 'My friends', 'My partner', 'Just me for now'] },
 };
@@ -58,7 +58,7 @@ export function Onboarding() {
   const [busy, setBusy] = useState(false);
   const p = state.profile;
   const goal = baseGoalMl(p);
-  const petName = state.petName.trim() || 'Capy';
+  const petName = state.petName.trim() || 'Bruno';
   const next = () => setStep((n) => Math.min(TOTAL - 1, n + 1));
   const answer = (key: string, value: string) => update({ answers: { ...state.answers, [key]: value } });
 
@@ -92,13 +92,13 @@ export function Onboarding() {
         {step === 0 && (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 18, paddingTop: 40 }}>
             <Capy def={SKINS[0]} size={230} cheer={sipped} live sipKey={sipped ? 1 : 0} />
-            <Text style={{ fontSize: 34, fontWeight: '800', color: C.ink, textAlign: 'center' }}>Meet your capybara</Text>
-            <Text style={{ fontSize: 18, color: C.sub, textAlign: 'center', fontWeight: '600' }}>Drink water, grow your capybara, level up and fill a pond together. Try a sip.</Text>
+            <Text style={{ fontSize: 34, fontWeight: '800', color: C.ink, textAlign: 'center' }}>Meet your bear</Text>
+            <Text style={{ fontSize: 18, color: C.sub, textAlign: 'center', fontWeight: '600' }}>Drink water, grow your bear, level up and fill a pond together. Try a sip.</Text>
             {!sipped ? (
               <Button label="Sip 250 ml" onPress={() => setSipped(true)} style={{ alignSelf: 'stretch' }} />
             ) : (
               <>
-                <Text style={{ fontSize: 20, fontWeight: '800', color: C.blue }}>Nice. Capy says thanks.</Text>
+                <Text style={{ fontSize: 20, fontWeight: '800', color: C.blue }}>Nice. Bruno says thanks.</Text>
                 <Button label="Continue" onPress={next} style={{ alignSelf: 'stretch' }} />
               </>
             )}
@@ -163,12 +163,12 @@ export function Onboarding() {
         {step === 8 && (
           <View style={{ alignItems: 'center', gap: 16 }}>
             <Capy def={SKINS[0]} size={170} live />
-            <Text style={{ fontSize: 30, fontWeight: '800', color: C.ink, textAlign: 'center' }}>Name your capybara</Text>
+            <Text style={{ fontSize: 30, fontWeight: '800', color: C.ink, textAlign: 'center' }}>Name your bear</Text>
             <TextInput
-              accessibilityLabel="Capybara name"
+              accessibilityLabel="Bear name"
               value={state.petName}
               onChangeText={(t) => update({ petName: t.slice(0, 14) })}
-              placeholder="Capy"
+              placeholder="Bruno"
               placeholderTextColor={C.sub}
               maxLength={14}
               style={{ alignSelf: 'stretch', backgroundColor: C.card, borderRadius: 20, padding: 16, fontSize: 20, fontWeight: '700', color: C.ink, textAlign: 'center' }}
