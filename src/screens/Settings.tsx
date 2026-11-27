@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Linking, ScrollView, Switch, View } from 'react-native';
 import { Text } from '../ui/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -6,12 +6,14 @@ import { Button } from '../ui/Button';
 import { C } from '../ui/theme';
 import { useStore } from '../store';
 import { disableReminders, enableReminders } from '../reminders';
-import { openCustomerCenter, restore, showPaywall } from '../purchases';
+import { buyLifetime, openCustomerCenter, planState, restore, showPaywall, type PlanState } from '../purchases';
 import { PRIVACY_URL, SUPPORT_EMAIL, TERMS_URL } from '../config';
 
 export function Settings({ pro, onPro, onClose }: { pro: boolean; onPro: () => void; onClose: () => void }) {
   const { state, goalToday, update, reset } = useStore();
   const p = state.profile;
+  const [plan, setPlan] = useState<PlanState>({ pro, payingRecurring: false, lifetime: false });
+  useEffect(() => { void planState().then(setPlan); }, [pro]);
 
   const toggle = async (on: boolean) => {
     if (on) {
@@ -28,8 +30,14 @@ export function Settings({ pro, onPro, onClose }: { pro: boolean; onPro: () => v
 
   const upgrade = async () => {
     const r = await showPaywall();
-    if (r === 'purchased') onPro();
+    if (r === 'purchased') { onPro(); void planState().then(setPlan); }
     else if (r === 'unavailable') Alert.alert('Pondly Pro', 'Pro is not available in this build yet.');
+  };
+
+  const getLifetime = async () => {
+    const r = await buyLifetime();
+    if (r === 'purchased') { onPro(); void planState().then(setPlan); Alert.alert('Lifetime unlocked', 'Thank you! Pondly Pro is yours for good. Your current subscription can be cancelled in Manage subscription.'); }
+    else if (r === 'unavailable') Alert.alert('Lifetime plan', 'Not available right now.');
   };
 
   const confirmReset = () =>
@@ -57,6 +65,8 @@ export function Settings({ pro, onPro, onClose }: { pro: boolean; onPro: () => v
           <Text style={{ fontWeight: '800', fontSize: 17, color: C.ink }}>Pondly Pro</Text>
           <Text style={{ color: C.sub, fontWeight: '600' }}>{pro ? 'Active. Thank you!' : 'Apply the Thirst Forecast to your daily goal.'}</Text>
           {!pro && <Button label="See Pro options" onPress={upgrade} />}
+          {pro && !plan.lifetime && <Button label="Change plan" kind="soft" onPress={upgrade} />}
+          {plan.payingRecurring && <Button label="Get Lifetime, one payment" onPress={getLifetime} />}
           {pro && <Button label="Manage subscription" onPress={openCustomerCenter} />}
           <Button label="Restore Purchases" kind="soft" onPress={doRestore} />
           <Text style={{ color: C.sub, fontSize: 12, lineHeight: 17 }}>Pondly Pro starts with a 7-day free trial, then renews automatically at the price shown on the Pro screen until you cancel. Cancel any time in your Apple ID subscription settings, at least 24 hours before the period ends. See the Terms of Use and Privacy Policy below.</Text>

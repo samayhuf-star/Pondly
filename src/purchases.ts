@@ -74,3 +74,38 @@ export async function restore(): Promise<boolean> {
     return false;
   }
 }
+
+/** Product ids set up in RevenueCat for every Samay app. */
+const LIFETIME_PRODUCT = 'pondly_pro_lifetime';
+const LIFETIME_OFFERING = 'lifetime';
+
+export type PlanState = { pro: boolean; payingRecurring: boolean; lifetime: boolean };
+
+/** Which plan the user is on. Lifetime is offered only to people paying weekly, monthly or annual (not in a free trial). */
+export async function planState(): Promise<PlanState> {
+  const none = { pro: false, payingRecurring: false, lifetime: false };
+  if (!started) return none;
+  try {
+    const info = await Purchases.getCustomerInfo();
+    const e = info.entitlements.active[PRO_ENTITLEMENT];
+    if (!e) return none;
+    const lifetime = e.productIdentifier === LIFETIME_PRODUCT;
+    return { pro: true, lifetime, payingRecurring: !lifetime && e.periodType === 'NORMAL' };
+  } catch {
+    return none;
+  }
+}
+
+/** Buys the lifetime plan from the separate "lifetime" offering. Returns true on success. */
+export async function buyLifetime(): Promise<'purchased' | 'cancelled' | 'unavailable'> {
+  if (!started) return 'unavailable';
+  try {
+    const offerings = await Purchases.getOfferings();
+    const pkg = offerings.all[LIFETIME_OFFERING]?.availablePackages[0];
+    if (!pkg) return 'unavailable';
+    await Purchases.purchasePackage(pkg);
+    return 'purchased';
+  } catch (e) {
+    return (e as { userCancelled?: boolean }).userCancelled ? 'cancelled' : 'unavailable';
+  }
+}
