@@ -8,7 +8,10 @@
       "distribution": "internal"
     },
     "production": {
-      "autoIncrement": false
+      "autoIncrement": false,
+      "env": {
+        "EXPO_PUBLIC_ONESIGNAL_APP_ID": "dbd4fd7c-d4ef-4bcb-83d1-9c54e70b4c8f"
+      }
     }
   },
   "submit": {

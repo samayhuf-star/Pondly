@@ -1,10 +1,14 @@
-# Pricing (decision of 17 Nov 2026)
+# Pricing (standard plans, 27 Nov 2026; replaces the 17 Nov weekly-only decision)
 
-One plan for the app: **weekly subscription, $1.99 per week, 7-day free trial** (new subscribers).
-Applies to every app except Klenzer. Monthly, yearly and lifetime plans are retired from the paywall.
+| Plan | Price | Trial | ASC product | RC package |
+|---|---|---|---|---|
+| Weekly | $2.99 | 7 days | `pondly_pro_weekly` (auto-renew, 1 week) | `$rc_weekly` |
+| Monthly | $5.99 | 7 days | `pondly_pro_monthly` (auto-renew, 1 month) | `$rc_monthly` |
+| Annual | $29.99 | 7 days | `pondly_pro_annual` (auto-renew, 1 year) | `$rc_annual` |
+| Lifetime | $39.99 | none (one-time) | `pondly_pro_lifetime` (non-consumable) | `$rc_lifetime` |
 
 ## Store and RevenueCat setup to match
-- App Store Connect: auto-renewing subscription `pondly_pro_weekly`, duration 1 week, price $1.99 (US tier), introductory offer = free trial, 1 week, all territories.
-- Google Play (where the app ships there): matching base plan, weekly, $1.99, free-trial offer of 7 days. The app is a free download with the subscription inside it (Play does not allow a trial on an upfront-paid app).
-- RevenueCat: entitlement `pro` attached to the weekly product; `default` offering has one WEEKLY package; paywall copy reads "7 days free, then $1.99/week".
-- Remove old monthly / yearly / lifetime packages from the offering. Do not delete the old products if anyone already bought them; they stay recognised.
+- App Store Connect: the four products above in one subscription group (lifetime is a non-consumable IAP); intro offer = 1-week free trial on each subscription.
+- RevenueCat: entitlement `pro` attached to all four; offering `default` holds the four packages; shown with RevenueCat's own paywall (`presentPaywall`).
+- Build env: `EXPO_PUBLIC_RC_IOS_KEY` (RevenueCat iOS public key, `appl_...`) set as an EAS env var for production; the app disables Pro if it is missing.
+- Plan IDs also live in `src/config.ts` (`PLANS`).

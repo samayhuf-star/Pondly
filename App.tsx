@@ -11,6 +11,7 @@ import { Pips } from './src/screens/Pips';
 import { Circles } from './src/screens/Circles';
 import { Settings } from './src/screens/Settings';
 import { initPurchases, isPro, onProChange } from './src/purchases';
+import { initPush } from './src/push';
 import { C } from './src/ui/theme';
 import { useFonts } from 'expo-font';
 import { Fredoka_700Bold } from '@expo-google-fonts/fredoka';
@@ -31,7 +32,7 @@ function Root() {
   const [settings, setSettings] = useState(false);
   const [pro, setPro] = useState(false);
 
-  useEffect(() => { initPurchases(); isPro().then(setPro); return onProChange(setPro); }, []);
+  useEffect(() => { initPurchases(); initPush(); isPro().then(setPro); return onProChange(setPro); }, []);
 
   if (!ready || (!fontsLoaded && !fontError)) return <View style={{ flex: 1, backgroundColor: C.bg, alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator color={C.blue} /></View>;
   if (!state.onboarded) return <Onboarding />;

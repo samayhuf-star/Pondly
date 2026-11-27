@@ -8,10 +8,12 @@ import { useStore } from '../store';
 import { disableReminders, enableReminders } from '../reminders';
 import { openCustomerCenter, restore, showPaywall } from '../purchases';
 import { PRIVACY_URL, SUPPORT_EMAIL, TERMS_URL } from '../config';
+import { usePushConsent } from '../push';
 
 export function Settings({ pro, onPro, onClose }: { pro: boolean; onPro: () => void; onClose: () => void }) {
   const { state, goalToday, update, reset } = useStore();
   const p = state.profile;
+  const [tipsOn, setTipsOn] = usePushConsent();
 
   const toggle = async (on: boolean) => {
     if (on) {
@@ -52,6 +54,11 @@ export function Settings({ pro, onPro, onClose }: { pro: boolean; onPro: () => v
             <Switch accessibilityLabel="Reminders" value={state.remindersOn} onValueChange={toggle} />
           </View>
           <Text style={{ color: C.sub, fontWeight: '600' }}>Goal today: {goalToday.toLocaleString()} ml</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text style={{ fontWeight: '800', fontSize: 17, color: C.ink }}>Tips and news</Text>
+            <Switch accessibilityLabel="Tips and news" value={tipsOn} onValueChange={setTipsOn} />
+          </View>
+          <Text style={{ color: C.sub, fontSize: 12, lineHeight: 17 }}>Occasional hydration tips and Pondly news by push (OneSignal). Nothing is sent or collected unless this is on. OneSignal never receives your water log.</Text>
         </View>
         <View style={card}>
           <Text style={{ fontWeight: '800', fontSize: 17, color: C.ink }}>Pondly Pro</Text>
@@ -59,7 +66,7 @@ export function Settings({ pro, onPro, onClose }: { pro: boolean; onPro: () => v
           {!pro && <Button label="See Pro options" onPress={upgrade} />}
           {pro && <Button label="Manage subscription" onPress={openCustomerCenter} />}
           <Button label="Restore Purchases" kind="soft" onPress={doRestore} />
-          <Text style={{ color: C.sub, fontSize: 12, lineHeight: 17 }}>Pondly Pro starts with a 7-day free trial, then renews automatically at the price shown on the Pro screen until you cancel. Cancel any time in your Apple ID subscription settings, at least 24 hours before the period ends. See the Terms of Use and Privacy Policy below.</Text>
+          <Text style={{ color: C.sub, fontSize: 12, lineHeight: 17 }}>Pondly Pro is weekly, monthly or yearly with a 7-day free trial, or a one-time lifetime purchase. Subscriptions renew automatically at the price shown on the Pro screen until you cancel. Cancel any time in your Apple ID subscription settings, at least 24 hours before the period ends. See the Terms of Use and Privacy Policy below.</Text>
         </View>
         <View style={card}>
           <Button label="Privacy Policy" kind="ghost" onPress={() => Linking.openURL(PRIVACY_URL)} />
